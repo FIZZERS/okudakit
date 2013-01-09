@@ -1,0 +1,12 @@
+//
+// Prefix header for all source files of the 'OkudaKit iOS' target in the 'OkudaKit iOS' project
+//
+
+#ifdef __OBJC__
+#import <Foundation/Foundation.h>
+#import <CoreGraphics/CoreGraphics.h>
+#import <UIKit/UIKit.h>
+#if __IPHONE_OS_VERSION_MIN_REQUIRED
+#import "NSMobile.h"
+#endif
+#endif
