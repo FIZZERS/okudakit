@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKNumberState.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 1/20/06.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import <ParseKit/PKNumberState.h>
 #import <ParseKit/PKReader.h>
@@ -25,8 +31,8 @@
 @end
 
 @interface PKNumberState ()
-- (CGFloat)absorbDigitsFromReader:(PKReader *)r;
-- (CGFloat)value;
+- (PKFloat)absorbDigitsFromReader:(PKReader *)r;
+- (PKFloat)value;
 - (void)parseLeftSideFromReader:(PKReader *)r;
 - (void)parseRightSideFromReader:(PKReader *)r;
 - (void)parseExponentFromReader:(PKReader *)r;
@@ -37,29 +43,45 @@
 
 @implementation PKNumberState
 
+- (id)init {
+    self = [super init];
+    if (self) {
+        self.allowsFloatingPoint = YES;
+        self.positivePrefix = '+';
+        self.negativePrefix = '-';
+        self.groupingSeparator = ',';
+        self.decimalSeparator = '.';
+    }
+    return self;
+}
+
+
 - (PKToken *)nextTokenFromReader:(PKReader *)r startingWith:(PKUniChar)cin tokenizer:(PKTokenizer *)t {
     NSParameterAssert(r);
     NSParameterAssert(t);
+    NSAssert1(!(allowsGroupingSeparator && (decimalSeparator == groupingSeparator)), @"You have configured your tokenizer's numberState with the same decimal and grouping separator: `%C`. You don't want to do that.", (unichar)decimalSeparator);
 
     [self resetWithReader:r];
     isNegative = NO;
     originalCin = cin;
     
-    if ('-' == cin) {
+    if (negativePrefix == cin) {
         isNegative = YES;
         cin = [r read];
-        [self append:'-'];
-    } else if ('+' == cin) {
+        [self append:negativePrefix];
+    } else if (positivePrefix == cin) {
         cin = [r read];
-        [self append:'+'];
+        [self append:positivePrefix];
     }
     
     [self reset:cin];
-    if ('.' == c) {
-        [self parseRightSideFromReader:r];
+    if (decimalSeparator == c) {
+        if (allowsFloatingPoint) {
+            [self parseRightSideFromReader:r];
+        }
     } else {
         [self parseLeftSideFromReader:r];
-        if (isDecimal) {
+        if (isDecimal && allowsFloatingPoint) {
             [self parseRightSideFromReader:r];
         }
     }
@@ -70,10 +92,10 @@
             [r unread];
             return [PKToken tokenWithTokenType:PKTokenTypeNumber stringValue:@"0" floatValue:0.0];
         } else {
-            if (isNegative && PKEOF != c) { // ??
+            if ((originalCin == positivePrefix || originalCin == negativePrefix) && PKEOF != c) { // ??
                 [r unread];
             }
-            return [t.symbolState nextTokenFromReader:r startingWith:originalCin tokenizer:t];
+            return [[self nextTokenizerStateFor:originalCin tokenizer:t] nextTokenFromReader:r startingWith:originalCin tokenizer:t];
         }
     }
     
@@ -91,32 +113,32 @@
 }
 
 
-- (CGFloat)value {
-    CGFloat result = (CGFloat)floatValue;
+- (PKFloat)value {
+    PKFloat result = (PKFloat)floatValue;
     
     NSUInteger i = 0;
     for ( ; i < exp; i++) {
         if (isNegativeExp) {
-            result /= (CGFloat)10.0;
+            result /= (PKFloat)10.0;
         } else {
-            result *= (CGFloat)10.0;
+            result *= (PKFloat)10.0;
         }
     }
     
-    return (CGFloat)result;
+    return (PKFloat)result;
 }
 
 
-- (CGFloat)absorbDigitsFromReader:(PKReader *)r {
-    CGFloat divideBy = 1.0;
-    CGFloat v = 0.0;
+- (PKFloat)absorbDigitsFromReader:(PKReader *)r {
+    PKFloat divideBy = 1.0;
+    PKFloat v = 0.0;
     BOOL isHexAlpha = NO;
     
     while (1) {
         isHexAlpha = NO;
         if (allowsHexadecimalNotation) {
             [self checkForHex:r];
-            if (c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F') {
+            if ((c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
                 isHexAlpha = YES;
             }
         }
@@ -141,6 +163,10 @@
             if (isFraction) {
                 divideBy *= base;
             }
+        } else if (allowsGroupingSeparator && groupingSeparator == c) {
+            [self append:c];
+            len++;
+            c = [r read];
         } else {
             break;
         }
@@ -150,7 +176,7 @@
         v = v / divideBy;
     }
 
-    return (CGFloat)v;
+    return (PKFloat)v;
 }
 
 
@@ -161,15 +187,15 @@
 
 
 - (void)parseRightSideFromReader:(PKReader *)r {
-    if ('.' == c) {
+    if (decimalSeparator == c) {
         PKUniChar n = [r read];
         BOOL nextIsDigit = isdigit(n);
         if (PKEOF != n) {
             [r unread];
         }
 
-        if (nextIsDigit || allowsTrailingDot) {
-            [self append:'.'];
+        if (nextIsDigit || allowsTrailingDecimalSeparator) {
+            [self append:decimalSeparator];
             if (nextIsDigit) {
                 c = [r read];
                 isFraction = YES;
@@ -191,8 +217,8 @@
         c = [r read];
         
         BOOL hasExp = isdigit(c);
-        isNegativeExp = ('-' == c);
-        BOOL positiveExp = ('+' == c);
+        isNegativeExp = (negativePrefix == c);
+        BOOL positiveExp = (positivePrefix == c);
         
         if (!hasExp && (isNegativeExp || positiveExp)) {
             c = [r read];
@@ -204,9 +230,9 @@
         if (hasExp) {
             [self append:e];
             if (isNegativeExp) {
-                [self append:'-'];
+                [self append:negativePrefix];
             } else if (positiveExp) {
-                [self append:'+'];
+                [self append:positivePrefix];
             }
             c = [r read];
             isFraction = NO;
@@ -224,9 +250,9 @@
     isDecimal = YES;
     isHex = NO;
     len = 0;
-    base = (CGFloat)10.0;
-    floatValue = (CGFloat)0.0;
-    exp = (CGFloat)0.0;
+    base = (PKFloat)10.0;
+    floatValue = (PKFloat)0.0;
+    exp = (PKFloat)0.0;
     isNegativeExp = NO;
 }
 
@@ -237,7 +263,7 @@
         len++;
         c = [r read];
         isDecimal = NO;
-        base = (CGFloat)16.0;
+        base = (PKFloat)16.0;
         isHex = YES;
         gotADigit = NO;
     }
@@ -247,12 +273,18 @@
 - (void)checkForOctal {
     if ('0' == firstNum && !isFraction && isDecimal && 2 == len) {
         isDecimal = NO;
-        base = (CGFloat)8.0;
+        base = (PKFloat)8.0;
     }
 }
 
-@synthesize allowsTrailingDot;
+@synthesize allowsTrailingDecimalSeparator;
 @synthesize allowsScientificNotation;
 @synthesize allowsOctalNotation;
 @synthesize allowsHexadecimalNotation;
+@synthesize allowsFloatingPoint;
+@synthesize allowsGroupingSeparator;
+@synthesize positivePrefix;
+@synthesize negativePrefix;
+@synthesize groupingSeparator;
+@synthesize decimalSeparator;
 @end

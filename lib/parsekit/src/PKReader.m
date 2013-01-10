@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKReader.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 1/21/06.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import <ParseKit/PKReader.h>
 
@@ -25,6 +31,7 @@
 
 - (void)dealloc {
     self.string = nil;
+    //if (buff) free(buff);
     [super dealloc];
 }
 
@@ -38,7 +45,11 @@
     if (string != s) {
         [string autorelease];
         string = [s copy];
-        length = string.length;
+        length = [string length];
+
+//        if (buff) free(buff);
+//        buff = malloc(sizeof(unichar)*length + 1);
+//        [s getCharacters:buff range:NSMakeRange(0, length)];
     }
     // reset cursor
     offset = 0;
@@ -50,6 +61,7 @@
         return PKEOF;
     }
     return [string characterAtIndex:offset++];
+    //return buff[offset++];
 }
 
 

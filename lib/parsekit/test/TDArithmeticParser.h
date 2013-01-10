@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKArithmeticParser.h
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 8/25/08.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import <ParseKit/ParseKit.h>
 
@@ -21,13 +27,13 @@
 }
 - (double)parse:(NSString *)s;
 
-@property (retain) PKCollectionParser *exprParser;
-@property (retain) PKCollectionParser *termParser;
-@property (retain) PKCollectionParser *plusTermParser;
-@property (retain) PKCollectionParser *minusTermParser;
-@property (retain) PKCollectionParser *factorParser;
-@property (retain) PKCollectionParser *timesFactorParser;
-@property (retain) PKCollectionParser *divFactorParser;
-@property (retain) PKCollectionParser *exponentFactorParser;
-@property (retain) PKCollectionParser *phraseParser;
+@property (nonatomic, retain) PKCollectionParser *exprParser;
+@property (nonatomic, retain) PKCollectionParser *termParser;
+@property (nonatomic, retain) PKCollectionParser *plusTermParser;
+@property (nonatomic, retain) PKCollectionParser *minusTermParser;
+@property (nonatomic, retain) PKCollectionParser *factorParser;
+@property (nonatomic, retain) PKCollectionParser *timesFactorParser;
+@property (nonatomic, retain) PKCollectionParser *divFactorParser;
+@property (nonatomic, retain) PKCollectionParser *exponentFactorParser;
+@property (nonatomic, retain) PKCollectionParser *phraseParser;
 @end

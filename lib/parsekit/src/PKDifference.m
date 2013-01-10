@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKDifference.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 6/26/09.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import "PKDifference.h"
 
@@ -15,9 +21,9 @@
 @implementation NSMutableSet (PKDifferenceAdditions)
 
 - (void)minusSetTestingEquality:(NSSet *)s {
-    for (id a1 in self) {
+    for (id a1 in [[self copy] autorelease]) {
         for (id a2 in s) {
-            if ([a1 isEqual:a2 ]) {
+            if ([a1 isEqual:a2]) {
                 [self removeObject:a1];
             }
         }
@@ -38,7 +44,7 @@
 
 @implementation PKDifference
 
-+ (id)differenceWithSubparser:(PKParser *)s minus:(PKParser *)m {
++ (PKDifference *)differenceWithSubparser:(PKParser *)s minus:(PKParser *)m {
     return [[[self alloc] initWithSubparser:s minus:m] autorelease];
 }
 
@@ -91,6 +97,18 @@
     [outAssemblies minusSetTestingEquality:[minus allMatchesFor:inAssemblies]];
     
     return outAssemblies;
+}
+
+
+- (void)add:(PKParser *)p {
+    NSParameterAssert([p isKindOfClass:[PKParser class]]);
+    NSAssert(!subparser || !minus, @"");
+    
+    if (!subparser) {
+        self.subparser = p;
+    } else if (!minus) {
+        self.minus = p;
+    }
 }
 
 @synthesize subparser;

@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKXMLParserTest.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 6/19/09.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import "TDXMLParserTest.h"
 
@@ -14,7 +20,7 @@
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"xml" ofType:@"grammar"];
     g = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
     factory = [PKParserFactory factory];
-    p = [factory parserFromGrammar:g assembler:self];
+    p = [factory parserFromGrammar:g assembler:self error:nil];
     t = p.tokenizer;
 }
 
@@ -95,7 +101,7 @@
 
 - (void)testSmallSTagGrammar {
     g = @"@delimitState='<';@reportsWhitespaceTokens=YES;@start=sTag;sTag='<' name (S attribute)* S? '>';name=/[^-:\\.]\\w+/;attribute=name eq attValue;eq=S? '=' S?;attValue=QuotedString;";
-    PKParser *sTag = [factory parserFromGrammar:g assembler:nil];
+    PKParser *sTag = [factory parserFromGrammar:g assembler:nil error:nil];
     t = sTag.tokenizer;
 
     t.string = @"<foo>";
@@ -129,7 +135,7 @@
         @"eTag='</' name S? '>';"
         @"name=/[^-:\\.]\\w+/;";
     
-    PKParser *eTag = [factory parserFromGrammar:g assembler:nil];
+    PKParser *eTag = [factory parserFromGrammar:g assembler:nil error:nil];
     t = eTag.tokenizer;
     
     t.string = @"</foo>";
@@ -174,7 +180,7 @@
 
 - (void)testSmallEmptyElemTagGrammar {
     g = @"@delimitState='<';@symbols='/>';@reportsWhitespaceTokens=YES;@start=emptyElemTag;emptyElemTag='<' name (S attribute)* S? '/>';name=/[^-:\\.]\\w+/;attribute=name eq attValue;eq=S? '=' S?;attValue=QuotedString;";
-    PKParser *emptyElemTag = [factory parserFromGrammar:g assembler:nil];
+    PKParser *emptyElemTag = [factory parserFromGrammar:g assembler:nil error:nil];
     t = emptyElemTag.tokenizer;
     
     t.string = @"<foo/>";
@@ -202,7 +208,7 @@
         @"@start = charData+;"
         @"charData = /[^<\\&]+/ - (/[^\\]]*\\]\\]>[^<\\&]*/);";
 
-    PKParser *charData = [factory parserFromGrammar:g assembler:nil];
+    PKParser *charData = [factory parserFromGrammar:g assembler:nil error:nil];
     t = charData.tokenizer;
 
     t.string = @" ";
@@ -242,7 +248,7 @@
         @"cdSect = DelimitedString('<![CDATA[', ']]>');"
     ;
     
-    PKParser *element = [factory parserFromGrammar:g assembler:nil];
+    PKParser *element = [factory parserFromGrammar:g assembler:nil error:nil];
     t = element.tokenizer;
     
     t.string = @"<foo/>";
@@ -305,7 +311,7 @@
     t.string = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
     NSDate *d = [NSDate date];
     res = [p bestMatchFor:[PKTokenAssembly assemblyWithTokenizer:t]];
-    NSLog(@"time: %d", [d timeIntervalSinceNow]);
+    NSLog(@"time: %f", [d timeIntervalSinceNow]);
     TDNotNil(res);
     TDTrue([[res description] hasSuffix:@"^"]);
 }
@@ -362,7 +368,7 @@
         @"@wordChars = ':' '.' '-' '_';"
         @"pi = '<?' piTarget ~/?>/* '?>';"
         @"@start = pi;";
-    PKParser *pi = [[PKParserFactory factory] parserFromGrammar:gram assembler:nil];
+    PKParser *pi = [[PKParserFactory factory] parserFromGrammar:gram assembler:nil error:nil];
     pi.tokenizer.string = @"<?foo bar='baz'?>";
     res = [pi bestMatchFor:[PKTokenAssembly assemblyWithTokenizer:pi.tokenizer]];
     TDEqualObjects(@"[<?, foo,  , bar, =, 'baz', ?>]<?/foo/ /bar/=/'baz'/?>^", [res description]);    

@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKArithmeticParser.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 8/25/08.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import "TDArithmeticParser.h"
 
@@ -92,7 +98,7 @@
         self.plusTermParser = [PKSequence sequence];
         [plusTermParser add:[[PKSymbol symbolWithString:@"+"] discard]];
         [plusTermParser add:self.termParser];
-        [plusTermParser setAssembler:self selector:@selector(didMatchPlus:)];
+        [plusTermParser setAssembler:self selector:@selector(parser:didMatchPlus:)];
     }
     return plusTermParser;
 }
@@ -104,7 +110,7 @@
         self.minusTermParser = [PKSequence sequence];
         [minusTermParser add:[[PKSymbol symbolWithString:@"-"] discard]];
         [minusTermParser add:self.termParser];
-        [minusTermParser setAssembler:self selector:@selector(didMatchMinus:)];
+        [minusTermParser setAssembler:self selector:@selector(parser:didMatchMinus:)];
     }
     return minusTermParser;
 }
@@ -132,7 +138,7 @@
         self.timesFactorParser = [PKSequence sequence];
         [timesFactorParser add:[[PKSymbol symbolWithString:@"*"] discard]];
         [timesFactorParser add:self.factorParser];
-        [timesFactorParser setAssembler:self selector:@selector(didMatchTimes:)];
+        [timesFactorParser setAssembler:self selector:@selector(parser:didMatchTimes:)];
     }
     return timesFactorParser;
 }
@@ -144,7 +150,7 @@
         self.divFactorParser = [PKSequence sequence];
         [divFactorParser add:[[PKSymbol symbolWithString:@"/"] discard]];
         [divFactorParser add:self.factorParser];
-        [divFactorParser setAssembler:self selector:@selector(didMatchDivide:)];
+        [divFactorParser setAssembler:self selector:@selector(parser:didMatchDivide:)];
     }
     return divFactorParser;
 }
@@ -156,7 +162,7 @@
         self.exponentFactorParser = [PKSequence sequence];
         [exponentFactorParser add:[[PKSymbol symbolWithString:@"^"] discard]];
         [exponentFactorParser add:self.factorParser];
-        [exponentFactorParser setAssembler:self selector:@selector(didMatchExp:)];
+        [exponentFactorParser setAssembler:self selector:@selector(parser:didMatchExp:)];
     }
     return exponentFactorParser;
 }
@@ -175,7 +181,7 @@
         [phraseParser add:s];
         
         PKNumber *n = [PKNumber number];
-        [n setAssembler:self selector:@selector(didMatchNumber:)];
+        [n setAssembler:self selector:@selector(parser:didMatchNumber:)];
         [phraseParser add:n];
     }
     return phraseParser;
@@ -185,41 +191,41 @@
 #pragma mark -
 #pragma mark Assembler
 
-- (void)didMatchNumber:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchNumber:(PKAssembly *)a {
     PKToken *tok = [a pop];
     [a push:[NSNumber numberWithDouble:tok.floatValue]];
 }
 
 
-- (void)didMatchPlus:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchPlus:(PKAssembly *)a {
     NSNumber *n2 = [a pop];
     NSNumber *n1 = [a pop];
     [a push:[NSNumber numberWithDouble:[n1 doubleValue] + [n2 doubleValue]]];
 }
 
 
-- (void)didMatchMinus:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchMinus:(PKAssembly *)a {
     NSNumber *n2 = [a pop];
     NSNumber *n1 = [a pop];
     [a push:[NSNumber numberWithDouble:[n1 doubleValue] - [n2 doubleValue]]];
 }
 
 
-- (void)didMatchTimes:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchTimes:(PKAssembly *)a {
     NSNumber *n2 = [a pop];
     NSNumber *n1 = [a pop];
     [a push:[NSNumber numberWithDouble:[n1 doubleValue] * [n2 doubleValue]]];
 }
 
 
-- (void)didMatchDivide:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchDivide:(PKAssembly *)a {
     NSNumber *n2 = [a pop];
     NSNumber *n1 = [a pop];
     [a push:[NSNumber numberWithDouble:[n1 doubleValue] / [n2 doubleValue]]];
 }
 
 
-- (void)didMatchExp:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchExp:(PKAssembly *)a {
     NSNumber *n2 = [a pop];
     NSNumber *n1 = [a pop];
     

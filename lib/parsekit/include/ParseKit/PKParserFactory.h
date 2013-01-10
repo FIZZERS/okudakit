@@ -31,15 +31,17 @@ typedef enum {
     NSMutableDictionary *parserTokensTable;
     NSMutableDictionary *parserClassTable;
     NSMutableDictionary *selectorTable;
+    BOOL wantsCharacters;
     PKToken *equals;
     PKToken *curly;
     PKToken *paren;
     BOOL isGatheringClasses;
 }
-+ (id)factory;
 
-- (PKParser *)parserFromGrammar:(NSString *)s assembler:(id)a;
-- (PKParser *)parserFromGrammar:(NSString *)s assembler:(id)a preassembler:(id)pa;
++ (PKParserFactory *)factory;
+
+- (PKParser *)parserFromGrammar:(NSString *)s assembler:(id)a error:(NSError **)outError;
+- (PKParser *)parserFromGrammar:(NSString *)s assembler:(id)a preassembler:(id)pa error:(NSError **)outError;
 
 - (PKCollectionParser *)exprParser;
 

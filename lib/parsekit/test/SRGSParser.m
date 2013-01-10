@@ -1,24 +1,30 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  SRGSParser.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 8/15/08.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import "SRGSParser.h"
 #import "NSString+ParseKitAdditions.h"
 
 @interface SRGSParser ()
-- (void)didMatchWord:(PKAssembly *)a;
-- (void)didMatchNum:(PKAssembly *)a;
-- (void)didMatchQuotedString:(PKAssembly *)a;
-- (void)didMatchStar:(PKAssembly *)a;
-- (void)didMatchQuestion:(PKAssembly *)a;
-- (void)didMatchAnd:(PKAssembly *)a;
-- (void)didMatchOr:(PKAssembly *)a;
-- (void)didMatchAssignment:(PKAssembly *)a;
-- (void)didMatchVariable:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchWord:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchNum:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchQuotedString:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchStar:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchQuestion:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchAnd:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchOr:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchAssignment:(PKAssembly *)a;
+- (void)parser:(PKParser *)p didMatchVariable:(PKAssembly *)a;
 @end
 
 @implementation SRGSParser
@@ -126,7 +132,7 @@
 }
 
 //TagFormat ::= ABNF_URI
-- (PKCollectionParser *)tagFormat {
+- (PKParser *)tagFormat {
     if (!tagFormat) {
         self.tagFormat = self.ABNF_URI;
     }
@@ -602,7 +608,7 @@
 
 
 //BaseURI ::= ABNF_URI
-- (PKCollectionParser *)baseURI {
+- (PKParser *)baseURI {
     if (!baseURI) {
         self.baseURI = [PKWord word];
     }
@@ -622,7 +628,7 @@
 }
 
 
-- (PKCollectionParser *)ABNF_URI {
+- (PKParser *)ABNF_URI {
     if (!ABNF_URI) {
         self.ABNF_URI = [PKWord word];
     }
@@ -630,7 +636,7 @@
 }
 
 
-- (PKCollectionParser *)ABNF_URI_with_Media_Type {
+- (PKParser *)ABNF_URI_with_Media_Type {
     if (!ABNF_URI_with_Media_Type) {
         self.ABNF_URI_with_Media_Type = [PKWord word];
     }
@@ -642,7 +648,7 @@
 #pragma mark -
 #pragma mark Assembler Methods
 
-- (void)didMatchWord:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchWord:(PKAssembly *)a {
 //    NSLog(@"%s", _cmd);
 //    NSLog(@"a: %@", a);
     PKToken *tok = [a pop];
@@ -650,7 +656,7 @@
 }
 
 
-- (void)didMatchNum:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchNum:(PKAssembly *)a {
 //    NSLog(@"%s", _cmd);
 //    NSLog(@"a: %@", a);
     PKToken *tok = [a pop];
@@ -658,66 +664,66 @@
 }
 
 
-- (void)didMatchQuotedString:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchQuotedString:(PKAssembly *)a {
 //    NSLog(@"%s", _cmd);
 //    NSLog(@"a: %@", a);
     PKToken *tok = [a pop];
     NSString *s = [tok.stringValue stringByTrimmingQuotes];
     
-    PKSequence *p = [PKSequence sequence];
+    PKSequence *seq = [PKSequence sequence];
     PKTokenizer *t = [PKTokenizer tokenizerWithString:s];
     PKToken *eof = [PKToken EOFToken];
     while (eof != (tok = [t nextToken])) {
-        [p add:[PKLiteral literalWithString:tok.stringValue]];
+        [seq add:[PKLiteral literalWithString:tok.stringValue]];
     }
     
-    [a push:p];
+    [a push:seq];
 }
 
 
-- (void)didMatchStar:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchStar:(PKAssembly *)a {
 //    NSLog(@"%s", _cmd);
 //    NSLog(@"a: %@", a);
-    PKRepetition *p = [PKRepetition repetitionWithSubparser:[a pop]];
-    [a push:p];
+    PKRepetition *rep = [PKRepetition repetitionWithSubparser:[a pop]];
+    [a push:rep];
 }
 
 
-- (void)didMatchQuestion:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchQuestion:(PKAssembly *)a {
 //    NSLog(@"%s", _cmd);
 //    NSLog(@"a: %@", a);
-    PKAlternation *p = [PKAlternation alternation];
-    [p add:[a pop]];
-    [p add:[PKEmpty empty]];
-    [a push:p];
+    PKAlternation *alt = [PKAlternation alternation];
+    [alt add:[a pop]];
+    [alt add:[PKEmpty empty]];
+    [a push:alt];
 }
 
 
-- (void)didMatchAnd:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchAnd:(PKAssembly *)a {
 //    NSLog(@"%s", _cmd);
 //    NSLog(@"a: %@", a);
     id top = [a pop];
-    PKSequence *p = [PKSequence sequence];
-    [p add:[a pop]];
-    [p add:top];
-    [a push:p];
+    PKSequence *seq = [PKSequence sequence];
+    [seq add:[a pop]];
+    [seq add:top];
+    [a push:seq];
 }
 
 
-- (void)didMatchOr:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchOr:(PKAssembly *)a {
 //    NSLog(@"%s", _cmd);
 //    NSLog(@"a: %@", a);
     id top = [a pop];
 //    NSLog(@"top: %@", top);
 //    NSLog(@"top class: %@", [top class]);
-    PKAlternation *p = [PKAlternation alternation];
-    [p add:[a pop]];
-    [p add:top];
-    [a push:p];
+    PKAlternation *alt = [PKAlternation alternation];
+    [alt add:[a pop]];
+    [alt add:top];
+    [a push:alt];
 }
 
 
-- (void)didMatchAssignment:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchAssignment:(PKAssembly *)a {
 //    NSLog(@"%s", _cmd);
 //    NSLog(@"a: %@", a);
     id val = [a pop];
@@ -729,7 +735,7 @@
 }
 
 
-- (void)didMatchVariable:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchVariable:(PKAssembly *)a {
 //    NSLog(@"%s", _cmd);
 //    NSLog(@"a: %@", a);
     PKToken *keyTok = [a pop];

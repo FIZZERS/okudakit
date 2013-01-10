@@ -1,15 +1,24 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKTestScaffold.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 7/13/08.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import "TDTestScaffold.h"
 
-#define RUN_ALL_TEST_CASES 1
-#define SOLO_TEST_CASE @"TDParserFactoryTest"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wobjc-protocol-method-implementation"
+
+#define RUN_ALL_TEST_CASES 0
+#define SOLO_TEST_CASE @"TDParserFactoryParserTest"
 
 @interface SenTestSuite (TDAdditions)
 - (void)addSuitesForClassNames:(NSArray *)classNames;
@@ -39,12 +48,12 @@ SenTestSuite *TDTokensTestSuite() {
                            @"TDSymbolStateTest",
                            @"TDCommentStateTest",
                            @"TDDelimitStateTest",
+                           @"TDURLStateTest",
+                           @"TDEmailStateTest",
+                           @"TDTwitterStateTest",
                            @"TDTokenizerStateTest",
-#ifdef MAC_OS_X_VERSION_10_6
-#if !TARGET_OS_IPHONE
                            @"TDTokenizerBlocksTest",
-#endif
-#endif
+                           @"TDParserBlocksTest",
                            nil];
     
     [suite addSuitesForClassNames:classNames];
@@ -83,6 +92,7 @@ SenTestSuite *TDParseTestSuite() {
                            @"TDJsonParserTest",
                            @"TDFastJsonParserTest",
                            @"TDRegularParserTest",
+                           @"TDRegexMatcherTest",
                            @"SRGSParserTest",
                            @"EBNFParserTest",
                            @"TDPlistParserTest",
@@ -150,5 +160,7 @@ SenTestSuite *TDParserFactoryTestSuite() {
         [self addTest:suite];
     }
 }
+
+#pragma clang diagnostic pop
 
 @end

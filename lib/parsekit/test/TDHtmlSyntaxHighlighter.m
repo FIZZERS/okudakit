@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKHtmlSyntaxHighlighter.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 8/28/08.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import "TDHtmlSyntaxHighlighter.h"
 #import "NSArray+ParseKitAdditions.h"
@@ -238,9 +244,9 @@
     }
     
     // handle case where no elements were encountered (plain text basically)
-    if (!highlightedString.length) {
+    if (![highlightedString length]) {
         PKToken *tok = nil;
-        while (tok = [self pop]) {
+        while ((tok = [self pop])) {
             NSAttributedString *as = [[[NSAttributedString alloc] initWithString:tok.stringValue attributes:textAttributes] autorelease];
             [highlightedString appendAttributedString:as];
         }
@@ -288,7 +294,7 @@
     NSEnumerator *e = [toks objectEnumerator];
     
     PKToken *tok = nil;
-    while (tok = [self nextNonWhitespaceTokenFrom:e]) {
+    while ((tok = [self nextNonWhitespaceTokenFrom:e])) {
         if ([tok isEqual:endCommentToken]) {
             break;
         } else {
@@ -314,7 +320,7 @@
     NSEnumerator *e = [toks objectEnumerator];
     
     PKToken *tok = nil;
-    while (tok = [self nextNonWhitespaceTokenFrom:e]) {
+    while ((tok = [self nextNonWhitespaceTokenFrom:e])) {
         if ([tok isEqual:endCDATAToken]) {
             break;
         } else {
@@ -340,7 +346,7 @@
     NSEnumerator *e = [toks objectEnumerator];
     
     PKToken *tok = nil;
-    while (tok = [self nextNonWhitespaceTokenFrom:e]) {
+    while ((tok = [self nextNonWhitespaceTokenFrom:e])) {
         if ([tok isEqual:endPIToken]) {
             break;
         } else {
@@ -366,7 +372,7 @@
     NSEnumerator *e = [toks objectEnumerator];
     
     PKToken *tok = nil;
-    while (tok = [self nextNonWhitespaceTokenFrom:e]) {
+    while ((tok = [self nextNonWhitespaceTokenFrom:e])) {
         if ([tok isEqual:gtToken]) {
             break;
         } else {
@@ -388,7 +394,7 @@
     NSAttributedString *as = nil;
     
     PKToken *tok = nil;
-    while (tok = [self nextNonWhitespaceTokenFrom:e]) {
+    while ((tok = [self nextNonWhitespaceTokenFrom:e])) {
         if ([tok isEqual:endScriptToken]) {
             break;
         } else {
@@ -464,7 +470,7 @@
 - (void)didMatchEndTag:(NSEnumerator *)e {
     // consume tagName to ">"
     PKToken *tok = nil; 
-    while (tok = [e nextObject]) {
+    while ((tok = [e nextObject])) {
         NSAttributedString *as = [[[NSAttributedString alloc] initWithString:tok.stringValue attributes:tagAttributes] autorelease];
         [highlightedString appendAttributedString:as];
     }
@@ -521,7 +527,7 @@
 - (NSArray *)objectsAbove:(id)fence {
     NSMutableArray *res = [NSMutableArray array];
     while (1) {
-        if (!stack.count) {
+        if (![stack count]) {
             break;
         }
         id obj = [self pop];
@@ -536,7 +542,7 @@
 
 - (id)peek {
     id obj = nil;
-    if (stack.count) {
+    if ([stack count]) {
         obj = [stack lastObject];
     }
     return obj;

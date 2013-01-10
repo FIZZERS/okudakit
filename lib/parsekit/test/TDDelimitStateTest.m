@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKDelimitStateTest.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 5/21/09.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import "TDDelimitStateTest.h"
 
@@ -33,7 +39,7 @@
     
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -52,7 +58,7 @@
     
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -71,13 +77,13 @@
     
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, @"/foo/");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     
     TDTrue(tok.isWord);
     TDEqualObjects(tok.stringValue, @"bar");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -96,13 +102,13 @@
     
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, @"/foo/");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @";");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -121,7 +127,7 @@
     
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -140,17 +146,17 @@
     
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"<");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isWord);
     TDEqualObjects(tok.stringValue, @"foo");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @">");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -170,17 +176,17 @@
     
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"<");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isWord);
     TDEqualObjects(tok.stringValue, @"foo");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @">");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -199,7 +205,7 @@
     
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -218,7 +224,7 @@
     
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -237,22 +243,28 @@
     
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"<");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
+#if PK_PLATFORM_TWITTER_STATE
+    TDTrue(tok.isHashtag);
+    TDEqualObjects(tok.stringValue, @"#foo");
+    TDEquals(tok.floatValue, (double)0.0);
+#else
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"#");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isWord);
     TDEqualObjects(tok.stringValue, @"foo");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
+#endif
     
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @">");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -273,17 +285,17 @@
     
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"<#");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isWord);
     TDEqualObjects(tok.stringValue, @"foo");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @">");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -302,7 +314,7 @@
     
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -321,7 +333,7 @@
     
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -339,27 +351,33 @@
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"=");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
+#if PK_PLATFORM_TWITTER_STATE
+    TDTrue(tok.isHashtag);
+    TDEqualObjects(tok.stringValue, @"#foo");
+    TDEquals(tok.floatValue, (double)0.0);
+#else
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"#");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isWord);
     TDEqualObjects(tok.stringValue, @"foo");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
+#endif
     
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"#");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"=");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -378,7 +396,7 @@
 
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -397,7 +415,7 @@
     
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -416,7 +434,7 @@
     
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -435,7 +453,7 @@
     
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -454,7 +472,7 @@
     
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -475,7 +493,7 @@
     
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -493,27 +511,27 @@
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"$");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"$");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isNumber);
     TDEqualObjects(tok.stringValue, @"123");
-    TDEquals(tok.floatValue, (CGFloat)123.0);
+    TDEquals(tok.floatValue, (double)123.0);
     
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"$");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"#");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -531,7 +549,7 @@
     tok = [t nextToken];
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -549,17 +567,17 @@
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"$");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"$");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue, @"$");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -578,7 +596,7 @@
     tok = [t nextToken];
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, @"$$$$#");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -596,7 +614,7 @@
     tok = [t nextToken];
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
 
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -614,7 +632,7 @@
     tok = [t nextToken];
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue, s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -632,7 +650,7 @@
     tok = [t nextToken];
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue,  @"${PRODUCT_NAME}");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isWord);
@@ -641,7 +659,7 @@
     tok = [t nextToken];
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue,  @"${EXECUTABLE_NAME}");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -659,7 +677,7 @@
     tok = [t nextToken];
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue,  s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -677,7 +695,7 @@
     tok = [t nextToken];
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue,  s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -695,7 +713,7 @@
     tok = [t nextToken];
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue,  s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -713,7 +731,7 @@
     tok = [t nextToken];
     TDTrue(tok.isWord);
     TDEqualObjects(tok.stringValue,  s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -731,7 +749,7 @@
     tok = [t nextToken];
     TDTrue(tok.isWord);
     TDEqualObjects(tok.stringValue,  s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -749,7 +767,7 @@
     tok = [t nextToken];
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue,  s);
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -767,22 +785,22 @@
     tok = [t nextToken];
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue,  @"@foo");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isWord);
     TDEqualObjects(tok.stringValue,  @"bar");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue,  @"@");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue,  @"@baz");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     tok = [t nextToken];
     TDEqualObjects(tok, [PKToken EOFToken]);
@@ -800,12 +818,12 @@
     tok = [t nextToken];
     TDTrue(tok.isSymbol);
     TDEqualObjects(tok.stringValue,  @"<");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
 
     tok = [t nextToken];
     TDTrue(tok.isWord);
     TDEqualObjects(tok.stringValue,  @"foo");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
     
     t.string = s;
     delimitState.allowsUnbalancedStrings = YES;
@@ -813,12 +831,12 @@
     tok = [t nextToken];
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue,  @"<foo bar=\"baz\" ");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
 
     tok = [t nextToken];
     TDTrue(tok.isDelimitedString);
     TDEqualObjects(tok.stringValue,  @"<bat ");
-    TDEquals(tok.floatValue, (CGFloat)0.0);
+    TDEquals(tok.floatValue, (double)0.0);
 }
 
 @end

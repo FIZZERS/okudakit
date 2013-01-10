@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKMiniCSSAssembler.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 12/23/08.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import "TDMiniCSSAssembler.h"
 #import "NSString+ParseKitAdditions.h"
@@ -50,37 +56,37 @@
 //    string      = QuotedString;
 //    constants   = 'bold' | 'normal' | 'italic';
 
-- (void)didMatchProperty:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchProperty:(PKAssembly *)a {
     PKToken *tok = [a pop];
     [a push:tok.stringValue];
 }
 
 
-- (void)didMatchString:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchString:(PKAssembly *)a {
     PKToken *tok = [a pop];
     [a push:[tok.stringValue stringByTrimmingQuotes]];
 }
 
 
-- (void)didMatchConstant:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchConstant:(PKAssembly *)a {
     PKToken *tok = [a pop];
     [a push:tok.stringValue];
 }
 
 
-- (void)didMatchNum:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchNum:(PKAssembly *)a {
     PKToken *tok = [a pop];
     [a push:[NSNumber numberWithFloat:tok.floatValue]];
 }
 
 
-- (void)didMatchPixelValue:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchPixelValue:(PKAssembly *)a {
     PKToken *tok = [a pop];
     [a push:[NSNumber numberWithFloat:tok.floatValue]];
 }
 
 
-- (void)didMatchRgb:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchRgb:(PKAssembly *)a {
     NSArray *objs = [a objectsAbove:paren];
     [a pop]; // discard '('
     CGFloat blue  = [(PKToken *)[objs objectAtIndex:0] floatValue]/255.0;
@@ -90,13 +96,13 @@
 }
 
 
-- (void)didMatchActualDecls:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchActualDecls:(PKAssembly *)a {
     id d = [NSMutableDictionary dictionary];
     NSArray *objs = [a objectsAbove:curly];
     [a pop]; // discard curly
 
     NSInteger i = 0;
-    NSInteger count = objs.count;
+    NSInteger count = [objs count];
     for ( ; i < count - 1; i++) {
         id propVal = [objs objectAtIndex:i];
         id propName = [objs objectAtIndex:++i];
@@ -107,7 +113,7 @@
 }
 
 
-- (void)didMatchRuleset:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchRuleset:(PKAssembly *)a {
     id props = [a pop];
     [self gatherPropertiesIn:props];
 
@@ -134,7 +140,7 @@
     [props removeObjectForKey:@"background-color"];
     
     NSString *fontFamily = [props objectForKey:@"font-family"];
-    if (!fontFamily.length) {
+    if (![fontFamily length]) {
         fontFamily = @"Monaco";
     }
     
@@ -162,12 +168,12 @@
 //    return i;
 //}
 //
-//- (void)didMatchHexcolor:(PKAssembly *)a {
+//- (void)parser:(PKParser *)p didMatchHexcolor:(PKAssembly *)a {
 //    PKToken *tok = [a pop];
 //    NSString *s = tok.stringValue;
 //    NSColor *color = nil;
 //    
-//    if (6 == s.length) {
+//    if (6 == [s length]) {
 //        NSString *redStr   = [s substringWithRange:NSMakeRange(0, 2)];
 //        NSString *greenStr = [s substringWithRange:NSMakeRange(2, 2)];
 //        NSString *blueStr  = [s substringWithRange:NSMakeRange(4, 2)];

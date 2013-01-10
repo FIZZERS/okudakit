@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKRepetition.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 7/13/08.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import <ParseKit/PKRepetition.h>
 #import <ParseKit/PKAssembly.h>
@@ -19,7 +25,7 @@
 
 @implementation PKRepetition
 
-+ (id)repetitionWithSubparser:(PKParser *)p {
++ (PKRepetition *)repetitionWithSubparser:(PKParser *)p {
     return [[[self alloc] initWithSubparser:p] autorelease];
 }
 
@@ -59,12 +65,19 @@
     NSMutableSet *outAssemblies = [[inAssemblies mutableCopy] autorelease];
     
     NSSet *s = inAssemblies;
-    while (s.count) {
+    while ([s count]) {
         s = [subparser matchAndAssemble:s];
         [outAssemblies unionSet:s];
     }
     
     return outAssemblies;
+}
+
+
+- (void)add:(PKParser *)p {
+    NSParameterAssert([p isKindOfClass:[PKParser class]]);
+    NSAssert(!subparser, @"");
+    self.subparser = p;
 }
 
 @synthesize subparser;

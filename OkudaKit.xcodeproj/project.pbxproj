@@ -1358,6 +1358,8 @@
 					Foundation,
 					"-framework",
 					AppKit,
+					"-ObjC",
+					"-all_load",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = OKDemoApp;
@@ -1383,6 +1385,8 @@
 					Foundation,
 					"-framework",
 					AppKit,
+					"-ObjC",
+					"-all_load",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = OKDemoApp;
@@ -1493,6 +1497,7 @@
 				85D13899169E33CA006C01A4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		85D1389A169E33CA006C01A4 /* Build configuration list for PBXNativeTarget "OkudaKit iOSTests" */ = {
 			isa = XCConfigurationList;
@@ -1501,6 +1506,7 @@
 				85D1389C169E33CA006C01A4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		85D138D2169E37F7006C01A4 /* Build configuration list for PBXNativeTarget "OKDemoMobile" */ = {
 			isa = XCConfigurationList;
@@ -1509,6 +1515,7 @@
 				85D138D4169E37F7006C01A4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D3A81B0C101E8F9500C38137 /* Build configuration list for PBXNativeTarget "OKDemoApp" */ = {
 			isa = XCConfigurationList;

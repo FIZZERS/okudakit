@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKJSToken.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 1/2/09.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import "PKJSToken.h"
 #import "PKJSUtils.h"
@@ -150,9 +156,9 @@ JSObjectRef PKToken_new(JSContextRef ctx, void *data) {
 JSObjectRef PKToken_construct(JSContextRef ctx, JSObjectRef constructor, size_t argc, const JSValueRef argv[], JSValueRef *ex) {
     PKPreconditionConstructorArgc(3, "PKToken");
     
-    CGFloat tokenType = JSValueToNumber(ctx, argv[0], NULL);
+    PKFloat tokenType = JSValueToNumber(ctx, argv[0], NULL);
     NSString *stringValue = PKJSValueGetNSString(ctx, argv[1], ex);
-    CGFloat floatValue = JSValueToNumber(ctx, argv[2], NULL);
+    PKFloat floatValue = JSValueToNumber(ctx, argv[2], NULL);
 
     PKToken *data = [[PKToken alloc] initWithTokenType:tokenType stringValue:stringValue floatValue:floatValue];
     return PKToken_new(ctx, data);

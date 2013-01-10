@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKRobotCommandTest.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 7/14/08.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import "TDRobotCommandTest.h"
 
@@ -69,7 +75,7 @@
     [s add:[[PKCaseInsensitiveLiteral literalWithString:@"carrier"] discard]];
     [s add:[[PKCaseInsensitiveLiteral literalWithString:@"from"] discard]];
     [s add:[self location]];
-    [s setAssembler:self selector:@selector(didMatchPickCommand:)];
+    [s setAssembler:self selector:@selector(parser:didMatchPickCommand:)];
     return s;
 }
 
@@ -80,7 +86,7 @@
     [s add:[[PKCaseInsensitiveLiteral literalWithString:@"carrier"] discard]];
     [s add:[[PKCaseInsensitiveLiteral literalWithString:@"at"] discard]];
     [s add:[self location]];
-    [s setAssembler:self selector:@selector(didMatchPlaceCommand:)];
+    [s setAssembler:self selector:@selector(parser:didMatchPlaceCommand:)];
     return s;
 }
 
@@ -89,7 +95,7 @@
     PKSequence *s = [PKSequence sequence];
     [s add:[[PKCaseInsensitiveLiteral literalWithString:@"scan"] discard]];
     [s add:[self location]];
-    [s setAssembler:self selector:@selector(didMatchScanCommand:)];
+    [s setAssembler:self selector:@selector(parser:didMatchScanCommand:)];
     return s;
 }
 
@@ -151,7 +157,7 @@
 }
 
 
-- (void)didMatchPickCommand:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchPickCommand:(PKAssembly *)a {
     RobotPickCommand *c = [[[RobotPickCommand alloc] init] autorelease];
     PKToken *location = [a pop];
     c.location = location.stringValue;
@@ -159,7 +165,7 @@
 }
 
 
-- (void)didMatchPlaceCommand:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchPlaceCommand:(PKAssembly *)a {
     RobotPlaceCommand *c = [[[RobotPlaceCommand alloc] init] autorelease];
     PKToken *location = [a pop];
     c.location = location.stringValue;
@@ -167,7 +173,7 @@
 }
 
 
-- (void)didMatchScanCommand:(PKAssembly *)a {
+- (void)parser:(PKParser *)p didMatchScanCommand:(PKAssembly *)a {
     RobotScanCommand *c = [[[RobotScanCommand alloc] init] autorelease];
     PKToken *location = [a pop];
     c.location = location.stringValue;

@@ -34,7 +34,7 @@
                                   [NSFont fontWithName:@"Monaco" size:11.0], NSFontAttributeName,
                                   nil];
         self.prefix = @"didMatch";
-        self.suffix = @":";
+        self.suffix = @"Predicate:";
     }
     return self;
 }
@@ -65,7 +65,7 @@
         NSUInteger prefixLen = prefix.length;
         NSInteger c = ((NSInteger)[selName characterAtIndex:prefixLen]) + 32; // lowercase
         NSRange r = NSMakeRange(prefixLen + 1, selName.length - (prefixLen + suffix.length + 1 /*:*/));
-        productionName = [NSString stringWithFormat:@"%C%@", c, [selName substringWithRange:r]];
+        productionName = [NSString stringWithFormat:@"%d%@", c, [selName substringWithRange:r]];
         [productionNames setObject:productionName forKey:selName];
     }
     
@@ -85,7 +85,7 @@
     
     NSMutableArray *toks = nil;
     PKToken *tok = nil;
-    while (tok = [a pop]) {
+    while ((tok = [a pop])) {
         if (PKTokenTypeWhitespace != tok.tokenType) {
             if (!toks) toks = [NSMutableArray array];
             [toks addObject:tok];
@@ -125,7 +125,7 @@
 - (NSMutableArray *)popWhitespaceTokensFrom:(PKAssembly *)a {
     NSMutableArray *whitespaceToks = nil;
     PKToken *tok = nil;
-    while (tok = [a pop]) {
+    while ((tok = [a pop])) {
         if (PKTokenTypeWhitespace == tok.tokenType) {
             if (!whitespaceToks) {
                 whitespaceToks = [NSMutableArray array];

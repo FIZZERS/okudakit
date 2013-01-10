@@ -1,14 +1,25 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKTrack.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 8/13/08.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import <ParseKit/PKTrack.h>
 #import <ParseKit/PKAssembly.h>
 #import <ParseKit/PKTrackException.h>
+
+@interface PKAssembly ()
+- (id)peek;
+- (NSString *)consumedObjectsJoinedByString:(NSString *)delimiter;
+@end
 
 @interface PKParser ()
 - (NSSet *)matchAndAssemble:(NSSet *)inAssemblies;
@@ -20,20 +31,20 @@
 @end
 
 @interface PKCollectionParser ()
-+ (id)collectionParserWithFirst:(PKParser *)p1 rest:(va_list)rest;
++ (PKCollectionParser *)collectionParserWithFirst:(PKParser *)p1 rest:(va_list)rest;
 @end
 
 @implementation PKTrack
 
-+ (id)track {
++ (PKTrack *)track {
     return [self trackWithSubparsers:nil];
 }
 
 
-+ (id)trackWithSubparsers:(PKParser *)p1, ... {
++ (PKTrack *)trackWithSubparsers:(PKParser *)p1, ... {
     va_list vargs;
     va_start(vargs, p1);
-    PKTrack *tr = [self collectionParserWithFirst:p1 rest:vargs];
+    PKTrack *tr = (PKTrack *)[self collectionParserWithFirst:p1 rest:vargs];
     va_end(vargs);
     return tr;
 }
@@ -47,7 +58,7 @@
     
     for (PKParser *p in subparsers) {
         outAssemblies = [p matchAndAssemble:outAssemblies];
-        if (!outAssemblies.count) {
+        if (![outAssemblies count]) {
             if (inTrack) {
                 [self throwTrackExceptionWithPreviousState:lastAssemblies parser:p];
             }
@@ -65,7 +76,7 @@
     PKAssembly *best = [self best:inAssemblies];
 
     NSString *after = [best consumedObjectsJoinedByString:@" "];
-    if (!after.length) {
+    if (![after length]) {
         after = @"-nothing-";
     }
     

@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKTokenAssembly.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 7/13/08.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import <ParseKit/PKTokenAssembly.h>
 #import <ParseKit/PKTokenizer.h>
@@ -21,18 +27,23 @@
 
 @implementation PKTokenAssembly
 
-+ (id)assemblyWithTokenizer:(PKTokenizer *)t {
++ (PKTokenAssembly *)assemblyWithTokenizer:(PKTokenizer *)t {
     return [[[self alloc] initWithTokenzier:t] autorelease];
+}
+
+
++ (PKTokenAssembly *)assemblyWithTokenArray:(NSArray *)a {
+    return [[[self alloc] initWithTokenArray:a] autorelease];
+}
+
+
++ (PKTokenAssembly *)assemblyWithString:(NSString *)s {
+    return (PKTokenAssembly *)[super assemblyWithString:s];
 }
 
 
 - (id)initWithTokenzier:(PKTokenizer *)t {
     return [self initWithString:t.string tokenzier:t tokenArray:nil];
-}
-
-
-+ (id)assemblyWithTokenArray:(NSArray *)a {
-    return [[[self alloc] initWithTokenArray:a] autorelease];
 }
 
 
@@ -94,7 +105,7 @@
     NSArray *toks = self.tokens;
     
     while (1) {
-        if (index >= toks.count) {
+        if (index >= [toks count]) {
             tok = nil;
             break;
         }
@@ -125,12 +136,12 @@
 
 
 - (BOOL)hasMore {
-    return (index < self.tokens.count);
+    return (index < [self.tokens count]);
 }
 
 
 - (NSUInteger)length {
-    return self.tokens.count;
+    return [self.tokens count];
 } 
 
 
@@ -140,7 +151,7 @@
 
 
 - (NSUInteger)objectsRemaining {
-    return (self.tokens.count - index);
+    return ([self.tokens count] - index);
 }
 
 
@@ -152,7 +163,7 @@
 
 - (NSString *)remainingObjectsJoinedByString:(NSString *)delimiter {
     NSParameterAssert(delimiter);
-    return [self objectsFrom:self.objectsConsumed to:self.length separatedBy:delimiter];
+    return [self objectsFrom:self.objectsConsumed to:[self length] separatedBy:delimiter];
 }
 
 

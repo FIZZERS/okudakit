@@ -1,21 +1,25 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKAST.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 7/11/09.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import "PKAST.h"
 
 @interface PKAST ()
-@property (nonatomic, retain) PKToken *token;
-@property (nonatomic, retain) NSMutableArray *children;
 @end
 
 @implementation PKAST
 
-+ (id)ASTWithToken:(PKToken *)tok {
++ (PKAST *)ASTWithToken:(PKToken *)tok {
     return [[[self alloc] initWithToken:tok] autorelease];
 }
 
@@ -41,27 +45,27 @@
 
 
 - (NSString *)description {
-    return [token stringValue];
+    return [self treeDescription];
 }
 
 
 - (NSString *)treeDescription {
-    if (![children count]) {
-        return [self description];
+    if (![_children count]) {
+        return [_token stringValue];
     }
     
     NSMutableString *ms = [NSMutableString string];
     
     if (![self isNil]) {
-        [ms appendFormat:@"(%@ ", [self description]];
+        [ms appendFormat:@"(%@ ", [_token stringValue]];
     }
 
     NSInteger i = 0;
-    for (PKAST *child in children) {
+    for (PKAST *child in _children) {
         if (i++) {
-            [ms appendFormat:@" %@", child];
+            [ms appendFormat:@" %@", [child treeDescription]];
         } else {
-            [ms appendFormat:@"%@", child];
+            [ms appendFormat:@"%@", [child treeDescription]];
         }
     }
     
@@ -73,24 +77,22 @@
 }
 
 
-- (NSInteger)type {
+- (int)type {
     NSAssert2(0, @"%s is an abastract method. Must be overridden in %@", __PRETTY_FUNCTION__, NSStringFromClass([self class]));
     return -1;
 }
 
 
 - (void)addChild:(PKAST *)c {
-    if (!children) {
+    if (!_children) {
         self.children = [NSMutableArray array];
     }
-    [children addObject:c];
+    [_children addObject:c];
 }
 
 
 - (BOOL)isNil {
-    return !token;
+    return !_token;
 }
 
-@synthesize token;
-@synthesize children;
 @end

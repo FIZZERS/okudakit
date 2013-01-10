@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  ParseKit.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 1/20/06.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import <ParseKit/PKTokenizer.h>
 #import <ParseKit/ParseKit.h>
@@ -24,12 +30,12 @@
 
 @implementation PKTokenizer
 
-+ (id)tokenizer {
++ (PKTokenizer *)tokenizer {
     return [self tokenizerWithString:nil];
 }
 
 
-+ (id)tokenizerWithString:(NSString *)s {
++ (PKTokenizer *)tokenizerWithString:(NSString *)s {
     return [[[self alloc] initWithString:s] autorelease];
 }
 
@@ -51,7 +57,27 @@
         self.whitespaceState = [[[PKWhitespaceState alloc] init] autorelease];
         self.wordState       = [[[PKWordState alloc] init] autorelease];
         self.delimitState    = [[[PKDelimitState alloc] init] autorelease];
+        self.URLState        = [[[PKURLState alloc] init] autorelease];
+#if PK_PLATFORM_EMAIL_STATE
+        self.emailState      = [[[PKEmailState alloc] init] autorelease];
+#endif
+        numberState.fallbackState = symbolState;
+        quoteState.fallbackState = symbolState;
+#if PK_PLATFORM_EMAIL_STATE
+        URLState.fallbackState = emailState;
+        emailState.fallbackState = wordState;
+#else
+        URLState.fallbackState = wordState;
+#endif
         
+#if PK_PLATFORM_TWITTER_STATE
+        self.twitterState    = [[[PKTwitterState alloc] init] autorelease];
+        twitterState.fallbackState = symbolState;
+
+        self.hashtagState    = [[[PKHashtagState alloc] init] autorelease];
+        hashtagState.fallbackState = symbolState;
+#endif
+
         self.tokenizerStates = [NSMutableArray arrayWithCapacity:STATE_COUNT];
         
         NSInteger i = 0;
@@ -67,6 +93,20 @@
         [commentState addSingleLineStartMarker:@"//"];
         [commentState addMultiLineStartMarker:@"/*" endMarker:@"*/"];
         [self setTokenizerState:commentState from:'/' to:'/'];
+
+//        
+//        // Twitter handles
+//        NSMutableCharacterSet *set = [NSMutableCharacterSet characterSetWithCharactersInString:@"_"];
+//        [set formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
+//        [self setTokenizerState:delimitState from:'@' to:'@'];
+//        [delimitState addStartMarker:@"@" endMarker:nil allowedCharacterSet:[[set copy] autorelease]];
+//
+//        // Hashtags
+//        [set addCharactersInString:@"%"];
+//        [self setTokenizerState:delimitState from:'#' to:'#'];
+//        [delimitState addStartMarker:@"#" endMarker:nil allowedCharacterSet:set];
+//
+//        delimitState.allowsUnbalancedStrings = YES;
     }
     return self;
 }
@@ -83,6 +123,14 @@
     self.whitespaceState = nil;
     self.wordState = nil;
     self.delimitState = nil;
+    self.URLState = nil;
+#if PK_PLATFORM_EMAIL_STATE
+    self.emailState = nil;
+#endif
+#if PK_PLATFORM_TWITTER_STATE
+    self.twitterState = nil;
+    self.hashtagState = nil;
+#endif
     [super dealloc];
 }
 
@@ -107,8 +155,6 @@
 }
 
 
-#ifdef MAC_OS_X_VERSION_10_6
-#if !TARGET_OS_IPHONE
 - (void)enumerateTokensUsingBlock:(void (^)(PKToken *tok, BOOL *stop))block {
     PKToken *eof = [PKToken EOFToken];
 
@@ -120,8 +166,6 @@
         if (stop) break;
     }
 }
-#endif
-#endif
 
 
 - (void)setTokenizerState:(PKTokenizerState *)state from:(PKUniChar)start to:(PKUniChar)end {
@@ -136,7 +180,7 @@
 
 - (void)setReader:(PKReader *)r {
     if (reader != r) {
-        [reader release];
+        [reader autorelease];
         reader = [r retain];
         reader.string = string;
     }
@@ -145,7 +189,7 @@
 
 - (void)setString:(NSString *)s {
     if (string != s) {
-        [string release];
+        [string autorelease];
         string = [s retain];
     }
     reader.string = string;
@@ -155,7 +199,7 @@
 #pragma mark -
 
 - (PKTokenizerState *)tokenizerStateFor:(PKUniChar)c {
-    if (c < 0 || c > 255) {
+    if (c < 0 || c >= STATE_COUNT) {
         // customization above 255 is not supported, so fetch default.
         return [self defaultTokenizerStateFor:c];
     } else {
@@ -164,6 +208,7 @@
     }
 }
 
+
 - (PKTokenizerState *)defaultTokenizerStateFor:(PKUniChar)c {
     if (c >= 0 && c <= ' ') {            // From:  0 to: 32    From:0x00 to:0x20
         return whitespaceState;
@@ -171,7 +216,13 @@
         return symbolState;
     } else if (c == '"') {               // From: 34 to: 34    From:0x22 to:0x22
         return quoteState;
-    } else if (c >= 35 && c <= 38) {
+    } else if (c == '#') {               // From: 35 to: 35    From:0x23 to:0x23
+#if PK_PLATFORM_TWITTER_STATE
+        return hashtagState;
+#else
+        return symbolState;
+#endif
+    } else if (c >= 36 && c <= 38) {
         return symbolState;
     } else if (c == '\'') {              // From: 39 to: 39    From:0x27 to:0x27
         return quoteState;
@@ -189,14 +240,20 @@
         return symbolState;
     } else if (c >= '0' && c <= '9') {   // From: 48 to: 57    From:0x30 to:0x39
         return numberState;
-    } else if (c >= 58 && c <= 64) {
+    } else if (c >= 58 && c <= 63) {
         return symbolState;
+    } else if (c == '@') {               // From: 64 to: 64    From:0x40 to:0x40
+#if PK_PLATFORM_TWITTER_STATE
+        return twitterState;
+#else
+        return symbolState;
+#endif
     } else if (c >= 'A' && c <= 'Z') {   // From: 65 to: 90    From:0x41 to:0x5A
-        return wordState;
+        return URLState;
     } else if (c >= 91 && c <= 96) {
         return symbolState;
     } else if (c >= 'a' && c <= 'z') {   // From: 97 to:122    From:0x61 to:0x7A
-        return wordState;
+        return URLState;
     } else if (c >= 123 && c <= 191) {
         return symbolState;
     } else if (c >= 0xC0 && c <= 0xFF) { // From:192 to:255    From:0xC0 to:0xFF
@@ -229,6 +286,14 @@
 @synthesize whitespaceState;
 @synthesize wordState;
 @synthesize delimitState;
+@synthesize URLState;
+#if PK_PLATFORM_EMAIL_STATE
+@synthesize emailState;
+#endif
+#if PK_PLATFORM_TWITTER_STATE
+@synthesize twitterState;
+@synthesize hashtagState;
+#endif
 @synthesize string;
 @synthesize reader;
 @synthesize tokenizerStates;

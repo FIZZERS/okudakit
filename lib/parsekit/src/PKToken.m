@@ -1,13 +1,20 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKToken.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 1/20/06.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import <ParseKit/PKToken.h>
 #import <ParseKit/PKTypes.h>
+#import "NSString+ParseKitAdditions.h"
 
 @interface PKTokenEOF : PKToken {}
 + (PKTokenEOF *)instance;
@@ -20,46 +27,10 @@ static PKTokenEOF *EOFToken = nil;
 + (PKTokenEOF *)instance {
     @synchronized(self) {
         if (!EOFToken) {
-            [[self alloc] init]; // assignment not done here
+            EOFToken = [[self alloc] init];
         }
     }
     return EOFToken;
-}
-
-
-+ (id)allocWithZone:(NSZone *)zone {
-    @synchronized(self) {
-        if (!EOFToken) {
-            EOFToken = [super allocWithZone:zone];
-            return EOFToken;  // assignment and return on first allocation
-        }
-    }
-    return nil; //on subsequent allocation attempts return nil
-}
-
-
-- (id)copyWithZone:(NSZone *)zone {
-    return self;
-}
-
-
-- (id)retain {
-    return self;
-}
-
-
-- (void)release {
-    // do nothing
-}
-
-
-- (id)autorelease {
-    return self;
-}
-
-
-- (NSUInteger)retainCount {
-    return UINT_MAX; // denotes an object that cannot be released
 }
 
 
@@ -74,7 +45,7 @@ static PKTokenEOF *EOFToken = nil;
 
 
 - (NSUInteger)offset {
-    return -1;
+    return NSNotFound;
 }
 
 @end
@@ -89,8 +60,14 @@ static PKTokenEOF *EOFToken = nil;
 @property (nonatomic, readwrite, getter=isWhitespace) BOOL whitespace;
 @property (nonatomic, readwrite, getter=isComment) BOOL comment;
 @property (nonatomic, readwrite, getter=isDelimitedString) BOOL delimitedString;
+@property (nonatomic, readwrite, getter=isURL) BOOL URL;
+@property (nonatomic, readwrite, getter=isEmail) BOOL email;
+#if PK_PLATFORM_TWITTER_STATE
+@property (nonatomic, readwrite, getter=isTwitter) BOOL twitter;
+@property (nonatomic, readwrite, getter=isHashtag) BOOL hashtag;
+#endif
 
-@property (nonatomic, readwrite) CGFloat floatValue;
+@property (nonatomic, readwrite) PKFloat floatValue;
 @property (nonatomic, readwrite, copy) NSString *stringValue;
 @property (nonatomic, readwrite) PKTokenType tokenType;
 @property (nonatomic, readwrite, copy) id value;
@@ -105,13 +82,13 @@ static PKTokenEOF *EOFToken = nil;
 }
 
 
-+ (id)tokenWithTokenType:(PKTokenType)t stringValue:(NSString *)s floatValue:(CGFloat)n {
++ (PKToken *)tokenWithTokenType:(PKTokenType)t stringValue:(NSString *)s floatValue:(PKFloat)n {
     return [[[self alloc] initWithTokenType:t stringValue:s floatValue:n] autorelease];
 }
 
 
 // designated initializer
-- (id)initWithTokenType:(PKTokenType)t stringValue:(NSString *)s floatValue:(CGFloat)n {
+- (id)initWithTokenType:(PKTokenType)t stringValue:(NSString *)s floatValue:(PKFloat)n {
     //NSParameterAssert(s);
     if (self = [super init]) {
         self.tokenType = t;
@@ -125,6 +102,12 @@ static PKTokenEOF *EOFToken = nil;
         self.whitespace = (PKTokenTypeWhitespace == t);
         self.comment = (PKTokenTypeComment == t);
         self.delimitedString = (PKTokenTypeDelimitedString == t);
+        self.URL = (PKTokenTypeURL == t);
+        self.email = (PKTokenTypeEmail == t);
+#if PK_PLATFORM_TWITTER_STATE
+        self.twitter = (PKTokenTypeTwitter == t);
+        self.hashtag = (PKTokenTypeHashtag == t);
+#endif
     }
     return self;
 }
@@ -163,17 +146,17 @@ static PKTokenEOF *EOFToken = nil;
     }
     
     PKToken *tok = (PKToken *)obj;
-    if (tokenType != tok.tokenType) {
+    if (tokenType != tok->tokenType) {
         return NO;
     }
     
-    if (self.isNumber) {
-        return floatValue == tok.floatValue;
+    if (number) {
+        return floatValue == tok->floatValue;
     } else {
         if (ignoringCase) {
-            return (NSOrderedSame == [stringValue caseInsensitiveCompare:tok.stringValue]);
+            return (NSOrderedSame == [stringValue caseInsensitiveCompare:tok->stringValue]);
         } else {
-            return [stringValue isEqualToString:tok.stringValue];
+            return [stringValue isEqualToString:tok->stringValue];
         }
     }
 }
@@ -182,7 +165,7 @@ static PKTokenEOF *EOFToken = nil;
 - (id)value {
     if (!value) {
         id v = nil;
-        if (self.isNumber) {
+        if (number) {
             v = [NSNumber numberWithFloat:floatValue];
         } else {
             v = stringValue;
@@ -190,6 +173,11 @@ static PKTokenEOF *EOFToken = nil;
         self.value = v;
     }
     return value;
+}
+
+
+- (NSString *)quotedStringValue {
+    return [stringValue stringByTrimmingQuotes];
 }
 
 
@@ -209,8 +197,18 @@ static PKTokenEOF *EOFToken = nil;
         typeString = @"Comment";
     } else if (self.isDelimitedString) {
         typeString = @"Delimited String";
+    } else if (self.isURL) {
+        typeString = @"URL";
+    } else if (self.isEmail) {
+        typeString = @"Email";
+#if PK_PLATFORM_TWITTER_STATE
+    } else if (self.isTwitter) {
+        typeString = @"Twitter";
+    } else if (self.isHashtag) {
+        typeString = @"Hashtag";
+#endif
     }
-    return [NSString stringWithFormat:@"<%@ %C%@%C>", typeString, 0x00AB, self.value, 0x00BB];
+    return [NSString stringWithFormat:@"<%@ %C%@%C>", typeString, (unichar)0x00AB, self.value, (unichar)0x00BB];
 }
 
 
@@ -225,6 +223,12 @@ static PKTokenEOF *EOFToken = nil;
 @synthesize whitespace;
 @synthesize comment;
 @synthesize delimitedString;
+@synthesize URL;
+@synthesize email;
+#if PK_PLATFORM_TWITTER_STATE
+@synthesize twitter;
+@synthesize hashtag;
+#endif
 @synthesize floatValue;
 @synthesize stringValue;
 @synthesize tokenType;

@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKJSNumberState.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 1/9/09.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import "PKJSNumberState.h"
 #import "PKJSUtils.h"
@@ -22,14 +28,14 @@ static JSValueRef PKNumberState_toString(JSContextRef ctx, JSObjectRef function,
 #pragma mark -
 #pragma mark Properties
 
-static JSValueRef PKNumberState_getAllowsTrailingDot(JSContextRef ctx, JSObjectRef this, JSStringRef propName, JSValueRef *ex) {
+static JSValueRef PKNumberState_getAllowsTrailingDecimalSeparator(JSContextRef ctx, JSObjectRef this, JSStringRef propName, JSValueRef *ex) {
     PKNumberState *data = JSObjectGetPrivate(this);
-    return JSValueMakeBoolean(ctx, data.allowsTrailingDot);
+    return JSValueMakeBoolean(ctx, data.allowsTrailingDecimalSeparator);
 }
 
-static bool PKNumberState_setAllowsTrailingDot(JSContextRef ctx, JSObjectRef this, JSStringRef propertyName, JSValueRef value, JSValueRef *ex) {
+static bool PKNumberState_setAllowsTrailingDecimalSeparator(JSContextRef ctx, JSObjectRef this, JSStringRef propertyName, JSValueRef value, JSValueRef *ex) {
     PKNumberState *data = JSObjectGetPrivate(this);
-    data.allowsTrailingDot = JSValueToBoolean(ctx, value);
+    data.allowsTrailingDecimalSeparator = JSValueToBoolean(ctx, value);
     return true;
 }
 
@@ -50,7 +56,7 @@ static JSStaticFunction PKNumberState_staticFunctions[] = {
 };
 
 static JSStaticValue PKNumberState_staticValues[] = {        
-{ "allowsTrailingDot", PKNumberState_getAllowsTrailingDot, PKNumberState_setAllowsTrailingDot, kJSPropertyAttributeDontDelete }, // Boolean
+{ "allowsTrailingDecimalSeparator", PKNumberState_getAllowsTrailingDecimalSeparator, PKNumberState_setAllowsTrailingDecimalSeparator, kJSPropertyAttributeDontDelete }, // Boolean
 { 0, 0, 0, 0 }
 };
 

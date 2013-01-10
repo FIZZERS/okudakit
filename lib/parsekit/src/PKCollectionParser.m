@@ -1,29 +1,35 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKCollectionParser.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 7/13/08.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import <ParseKit/PKCollectionParser.h>
 
 @interface PKCollectionParser ()
-+ (id)collectionParserWithFirst:(PKParser *)p1 rest:(va_list)rest;
++ (PKCollectionParser *)collectionParserWithFirst:(PKParser *)p1 rest:(va_list)rest;
 
 @property (nonatomic, readwrite, retain) NSMutableArray *subparsers;
 @end
 
 @implementation PKCollectionParser
 
-+ (id)collectionParserWithFirst:(PKParser *)p1 rest:(va_list)rest {
++ (PKCollectionParser *)collectionParserWithFirst:(PKParser *)p1 rest:(va_list)rest {
     PKCollectionParser *cp = [[[self alloc] init] autorelease];
     
     if (p1) {
         [cp add:p1];
         
         PKParser *p = nil;
-        while (p = va_arg(rest, PKParser *)) {
+        while ((p = va_arg(rest, PKParser *))) {
             [cp add:p];
         }
     }
@@ -42,14 +48,14 @@
         self.subparsers = [NSMutableArray array];
 
         if (p1) {
-            [subparsers addObject:p1];
+            [self add:p1];
 
             va_list vargs;
             va_start(vargs, p1);
 
             PKParser *p = nil;
-            while (p = va_arg(vargs, PKParser *)) {
-                [subparsers addObject:p];
+            while ((p = va_arg(vargs, PKParser *))) {
+                [self add:p];
             }
 
             va_end(vargs);
@@ -66,9 +72,6 @@
 
 
 - (void)add:(PKParser *)p {
-    if (![p isKindOfClass:[PKParser class]]) {
-        NSLog(@"p: %@", p);
-    }
     NSParameterAssert([p isKindOfClass:[PKParser class]]);
     [subparsers addObject:p];
 }

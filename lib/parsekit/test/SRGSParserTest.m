@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  SRGSParserTest.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 8/15/08.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import "SRGSParserTest.h"
 
@@ -15,6 +21,8 @@
 }
 
 
+#if PK_PLATFORM_TWITTER_STATE
+#else
 - (void)test {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"example1" ofType:@"srgs"];
     s = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
@@ -25,19 +33,28 @@
     NSLog(@"\n\n\n result: %@ \n\n\n", result);
 //    TDEqualObjects(@"[#, ABNF, 1.0, ;]#/ABNF/1.0/;^", [result description]);
 }
+#endif
 
 - (void)testSelfIdentHeader {
     s = @"#ABNF 1.0;";
     a = [p assemblyWithString:s];
     result = [p.selfIdentHeader bestMatchFor:a];
     TDNotNil(result);
+#if PK_PLATFORM_TWITTER_STATE
+    TDEqualObjects(@"[#ABNF, 1.0, ;]#ABNF/1.0/;^", [result description]);
+#else
     TDEqualObjects(@"[#, ABNF, 1.0, ;]#/ABNF/1.0/;^", [result description]);
+#endif
 
     s = @"#ABNF 1.0 UTF;";
     a = [p assemblyWithString:s];
     result = [p.selfIdentHeader bestMatchFor:a];
     TDNotNil(result);
+#if PK_PLATFORM_TWITTER_STATE
+    TDEqualObjects(@"[#ABNF, 1.0, UTF, ;]#ABNF/1.0/UTF/;^", [result description]);
+#else
     TDEqualObjects(@"[#, ABNF, 1.0, UTF, ;]#/ABNF/1.0/UTF/;^", [result description]);
+#endif
 }
 
 

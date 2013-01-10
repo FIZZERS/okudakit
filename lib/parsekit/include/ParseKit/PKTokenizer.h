@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  ParseKit.h
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 1/20/06.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import <Foundation/Foundation.h>
 #import <ParseKit/PKTypes.h>
@@ -13,12 +19,19 @@
 @class PKTokenizerState;
 @class PKNumberState;
 @class PKQuoteState;
-@class PKSlashState;
 @class PKCommentState;
 @class PKSymbolState;
 @class PKWhitespaceState;
 @class PKWordState;
 @class PKDelimitState;
+@class PKURLState;
+#if PK_PLATFORM_EMAIL_STATE
+@class PKEmailState;
+#endif
+#if PK_PLATFORM_TWITTER_STATE
+@class PKTwitterState;
+@class PKHashtagState;
+#endif
 @class PKReader;
 
 /*!
@@ -31,12 +44,14 @@
 @code
      From     To    State
         0    ' '    whitespaceState
-      'a'    'z'    wordState
-      'A'    'Z'    wordState
+      'a'    'z'    URLState
+      'A'    'Z'    URLState
       160    255    wordState
       '0'    '9'    numberState
       '-'    '-'    numberState
       '.'    '.'    numberState
+      '@'    '@'    twitterState
+      '#'    '#'    hashtagState
       '"'    '"'    quoteState
      '\''   '\''    quoteState
       '/'    '/'    commentState
@@ -56,20 +71,28 @@
     PKWhitespaceState *whitespaceState;
     PKWordState *wordState;
     PKDelimitState *delimitState;
+    PKURLState *URLState;
+#if PK_PLATFORM_EMAIL_STATE
+    PKEmailState *emailState;
+#endif
+#if PK_PLATFORM_TWITTER_STATE
+    PKTwitterState *twitterState;
+    PKHashtagState *hashtagState;
+#endif
 }
 
 /*!
     @brief      Convenience factory method. Sets string from which to to read to <tt>nil</tt>.
     @result     An initialized tokenizer.
 */
-+ (id)tokenizer;
++ (PKTokenizer *)tokenizer;
 
 /*!
     @brief      Convenience factory method.
     @param      s string to read from.
     @result     An autoreleased initialized tokenizer.
 */
-+ (id)tokenizerWithString:(NSString *)s;
++ (PKTokenizer *)tokenizerWithString:(NSString *)s;
 
 /*!
     @brief      Designated Initializer. Constructs a tokenizer to read from the supplied string.
@@ -84,16 +107,12 @@
 */
 - (PKToken *)nextToken;
 
-#ifdef MAC_OS_X_VERSION_10_6
-#if !TARGET_OS_IPHONE
 /*!
     @brief      Enumerate tokens in this tokenizer using block
     @details    repeatedly executes block by passing the token returned from calling <tt>-nextToken</tt> on this tokenizer
     @param      block the code to execute with every token returned by calling <tt>-nextToken</tt> on this tokenizer
 */
 - (void)enumerateTokensUsingBlock:(void (^)(PKToken *tok, BOOL *stop))block;
-#endif
-#endif
 
 /*!
     @brief      Change the state the tokenizer will enter upon reading any character between "start" and "end".
@@ -150,4 +169,13 @@
     @brief      The state this tokenizer uses to build delimited strings.
 */
 @property (nonatomic, retain) PKDelimitState *delimitState;
+
+@property (nonatomic, retain) PKURLState *URLState;
+#if PK_PLATFORM_EMAIL_STATE
+@property (nonatomic, retain) PKEmailState *emailState;
+#endif
+#if PK_PLATFORM_TWITTER_STATE
+@property (nonatomic, retain) PKTwitterState *twitterState;
+@property (nonatomic, retain) PKHashtagState *hashtagState;
+#endif
 @end

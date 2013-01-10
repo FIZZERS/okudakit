@@ -1,12 +1,23 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKJSUtils.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 1/2/09.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import "PKJSUtils.h"
+
+NSString *PKJSStringGetNSString(JSStringRef str) {
+    return [(id)JSStringCopyCFString(NULL, str) autorelease];
+}
+
 
 JSValueRef PKCFTypeToJSValue(JSContextRef ctx, CFTypeRef value, JSValueRef *ex) {
     JSValueRef result = NULL;
@@ -112,7 +123,7 @@ CFTypeRef PKJSValueCopyCFType(JSContextRef ctx, JSValueRef value, JSValueRef *ex
     } else if (JSValueIsNull(ctx, value)) {
         result = NULL;
     } else if (JSValueIsNumber(ctx, value)) {
-        CGFloat d = JSValueToNumber(ctx, value, NULL);
+        double d = JSValueToNumber(ctx, value, NULL);
         result = CFNumberCreate(NULL, kCFNumberCGFloatType, &d);
     } else if (JSValueIsString(ctx, value)) {
         result = PKJSValueCopyCFString(ctx, value, ex);
@@ -234,3 +245,70 @@ bool PKJSValueIsInstanceOfClass(JSContextRef ctx, JSValueRef value, char *classN
     
     return JSValueIsInstanceOfConstructor(ctx, value, constr, NULL);
 }
+
+JSValueRef PKEvaluateScript(JSGlobalContextRef ctx, NSString *script, NSString *sourceURLString, NSString **outErrMsg) {
+    JSValueRef result = NULL;
+    
+    // get context
+    if (!ctx) {
+        ctx = JSGlobalContextCreate(NULL);
+    }
+    
+    JSStringRef scriptStr = JSStringCreateWithCFString((CFStringRef)script);
+    
+    // setup source url string
+    JSStringRef sourceURLStr = NULL;
+    if ([sourceURLString length]) {
+        sourceURLStr = JSStringCreateWithCFString((CFStringRef)sourceURLString);
+    }
+    
+    // check syntax
+    JSValueRef e = NULL;
+    JSCheckScriptSyntax(ctx, scriptStr, sourceURLStr, 0, &e);
+    
+    // if syntax error...
+    if (e) {
+        if (outErrMsg) {
+            NSString *msg = PKJSValueGetNSString(ctx, e, NULL);
+            *outErrMsg = [NSString stringWithFormat:NSLocalizedString(@"JavaScript syntax error:\n\n%@", @""), msg];
+            NSLog(@"%@", *outErrMsg);
+        }
+        goto done;
+    }
+    
+    // eval the script
+    result = JSEvaluateScript(ctx, scriptStr, NULL, sourceURLStr, 0, &e);
+    if (e) {
+        if (outErrMsg) {
+            NSString *msg = PKJSValueGetNSString(ctx, e, NULL);
+            *outErrMsg = [NSString stringWithFormat:NSLocalizedString(@"JavaScript runtime error:\n\n%@", @""), msg];
+            NSLog(@"%@", *outErrMsg);
+        }
+        goto done;
+    }
+    
+    // memory management
+done:
+    if (scriptStr) JSStringRelease(scriptStr);
+    if (sourceURLStr) JSStringRelease(sourceURLStr);
+            
+    return result;
+}
+
+BOOL PKBooleanForScript(JSGlobalContextRef ctx, NSString *script, NSString *sourceURLString, NSString **outErrMsg) {
+    // wrap source in boolean cast
+    NSString *fmt = @"(function(){return Boolean(%@)})();";
+    script = [NSString stringWithFormat:fmt, script];
+    
+    JSValueRef res = PKEvaluateScript(ctx, script, sourceURLString, outErrMsg);
+    
+    // convert result to boolean
+    BOOL result = NO;
+    if (res) {
+        result = JSValueToBoolean(ctx, res);
+    }
+
+    return result;
+}
+
+

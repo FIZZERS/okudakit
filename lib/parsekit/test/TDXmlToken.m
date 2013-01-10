@@ -1,12 +1,19 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKXmlToken.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 8/16/08.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import "TDXmlToken.h"
+#import "PKTypes.h"
 
 @interface TDXmlTokenEOF : TDXmlToken {}
 @end
@@ -171,7 +178,7 @@
     } else if (self.isXmlDecl) {
         typeString = @"XML Declaration";
     }
-    return [NSString stringWithFormat:@"<%@ %C%@%C>", typeString, 0x00ab, self.value, 0x00bb];
+    return [NSString stringWithFormat:@"<%@ %C%@%C>", typeString, (unichar)0x00ab, self.value, (unichar)0x00bb];
 }
 
 

@@ -1,17 +1,23 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  SRGSParser.h
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 8/15/08.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import <ParseKit/ParseKit.h>
 
 @interface SRGSParser : PKSequence {
     PKCollectionParser *selfIdentHeader;
     PKCollectionParser *ruleName;
-    PKCollectionParser *tagFormat;
+    PKParser *tagFormat;
     PKCollectionParser *lexiconURI;
     PKCollectionParser *weight;
     PKCollectionParser *repeat;
@@ -41,17 +47,17 @@
     PKCollectionParser *specialRuleRef;
     PKCollectionParser *repeatOperator;
     
-    PKCollectionParser *baseURI;
+    PKParser *baseURI;
     PKCollectionParser *languageCode;
-    PKCollectionParser *ABNF_URI;
-    PKCollectionParser *ABNF_URI_with_Media_Type;
+    PKParser *ABNF_URI;
+    PKParser *ABNF_URI_with_Media_Type;
 }
 - (id)parse:(NSString *)s;
 - (PKAssembly *)assemblyWithString:(NSString *)s;
 
 @property (nonatomic, retain) PKCollectionParser *selfIdentHeader;
 @property (nonatomic, retain) PKCollectionParser *ruleName;
-@property (nonatomic, retain) PKCollectionParser *tagFormat;
+@property (nonatomic, retain) PKParser *tagFormat;
 @property (nonatomic, retain) PKCollectionParser *lexiconURI;
 @property (nonatomic, retain) PKCollectionParser *weight;
 @property (nonatomic, retain) PKCollectionParser *repeat;
@@ -81,8 +87,8 @@
 @property (nonatomic, retain) PKCollectionParser *specialRuleRef;
 @property (nonatomic, retain) PKCollectionParser *repeatOperator;
 
-@property (nonatomic, retain) PKCollectionParser *baseURI;
+@property (nonatomic, retain) PKParser *baseURI;
 @property (nonatomic, retain) PKCollectionParser *languageCode;
-@property (nonatomic, retain) PKCollectionParser *ABNF_URI;
-@property (nonatomic, retain) PKCollectionParser *ABNF_URI_with_Media_Type;
+@property (nonatomic, retain) PKParser *ABNF_URI;
+@property (nonatomic, retain) PKParser *ABNF_URI_with_Media_Type;
 @end

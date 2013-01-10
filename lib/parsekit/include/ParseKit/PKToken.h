@@ -1,12 +1,19 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKToken.h
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 1/20/06.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import <Foundation/Foundation.h>
+#import <ParseKit/PKTypes.h>
 
 /*!
     @typedef    enum PKTokenType
@@ -29,7 +36,13 @@ typedef enum {
     PKTokenTypeWhitespace,
     PKTokenTypeComment,
     PKTokenTypeDelimitedString,
-    PKTokenTypeAny
+    PKTokenTypeAny,
+    PKTokenTypeURL,
+    PKTokenTypeEmail,
+#if PK_PLATFORM_TWITTER_STATE
+    PKTokenTypeTwitter,
+    PKTokenTypeHashtag,
+#endif
 } PKTokenType;
 
 /*!
@@ -38,7 +51,7 @@ typedef enum {
     @details    For example, a typical tokenizer would break the string <tt>"1.23 &lt;= 12.3"</tt> into three tokens: the number <tt>1.23</tt>, a less-than-or-equal symbol, and the number <tt>12.3</tt>. A token is a receptacle, and relies on a tokenizer to decide precisely how to divide a string into tokens.
 */
 @interface PKToken : NSObject <NSCopying> {
-    CGFloat floatValue;
+    PKFloat floatValue;
     NSString *stringValue;
     PKTokenType tokenType;
     
@@ -49,6 +62,12 @@ typedef enum {
     BOOL whitespace;
     BOOL comment;
     BOOL delimitedString;
+    BOOL URL;
+    BOOL email;
+#if PK_PLATFORM_TWITTER_STATE
+    BOOL twitter;
+    BOOL hashtag;
+#endif
     
     id value;
     NSUInteger offset;
@@ -67,7 +86,7 @@ typedef enum {
     @param      n the number falue of this token.
     @result     an autoreleased initialized token.
 */
-+ (id)tokenWithTokenType:(PKTokenType)t stringValue:(NSString *)s floatValue:(CGFloat)n;
++ (PKToken *)tokenWithTokenType:(PKTokenType)t stringValue:(NSString *)s floatValue:(PKFloat)n;
 
 /*!
     @brief      Designated initializer. Constructs a token of the indicated type and associated string or numeric values.
@@ -76,7 +95,7 @@ typedef enum {
     @param      n the number falue of this token.
     @result     an autoreleased initialized token.
 */
-- (id)initWithTokenType:(PKTokenType)t stringValue:(NSString *)s floatValue:(CGFloat)n;
+- (id)initWithTokenType:(PKTokenType)t stringValue:(NSString *)s floatValue:(PKFloat)n;
 
 /*!
     @brief      Returns true if the supplied object is an equivalent <tt>PKToken</tt>, ignoring differences in case.
@@ -135,6 +154,32 @@ typedef enum {
 @property (nonatomic, readonly, getter=isDelimitedString) BOOL delimitedString;
 
 /*!
+    @property   URL
+    @brief      True if this token is a URL. getter=isURL
+*/
+@property (nonatomic, readonly, getter=isURL) BOOL URL;
+
+/*!
+    @property   email
+    @brief      True if this token is an email address. getter=isEmail
+*/
+@property (nonatomic, readonly, getter=isEmail) BOOL email;
+
+#if PK_PLATFORM_TWITTER_STATE
+/*!
+    @property   twitter
+    @brief      True if this token is an twitter handle. getter=isTwitter
+*/
+@property (nonatomic, readonly, getter=isTwitter) BOOL twitter;
+
+/*!
+    @property   hashtaag
+    @brief      True if this token is an twitter hashtag. getter=isHashtag
+*/
+@property (nonatomic, readonly, getter=isHashtag) BOOL hashtag;
+#endif
+
+/*!
     @property   tokenType
     @brief      The type of this token.
 */
@@ -144,13 +189,19 @@ typedef enum {
     @property   floatValue
     @brief      The numeric value of this token.
 */
-@property (nonatomic, readonly) CGFloat floatValue;
+@property (nonatomic, readonly) PKFloat floatValue;
 
 /*!
     @property   stringValue
     @brief      The string value of this token.
 */
 @property (nonatomic, readonly, copy) NSString *stringValue;
+
+/*!
+    @property   stringValue
+    @brief      If a QuotedString, the string value of this token minus the quotes. Otherwise the stringValue.
+ */
+@property (nonatomic, readonly, copy) NSString *quotedStringValue;
 
 /*!
     @property   value

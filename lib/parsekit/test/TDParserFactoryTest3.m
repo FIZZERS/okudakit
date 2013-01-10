@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKParserFactoryTest3.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 6/27/09.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import "TDParserFactoryTest3.h"
 
@@ -16,9 +22,9 @@
 
 
 - (void)testOrVsAndPrecendence {
-    g = @" @start ( didMatchFoo: ) = foo;\n"
+    g = @" @start ( parser:didMatchFoo: ) = foo;\n"
     @"  foo = Word & /foo/ | Number! { 1 } ( DelimitedString ( '/' , '/' ) Symbol- '%' ) * /bar/ ;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo";
@@ -29,7 +35,7 @@
 
 - (void)testNegation {
     g = @"@start = ~'foo';";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"foo";
@@ -48,7 +54,7 @@
 
 - (void)testNegateSymbol {
     g = @"@start = ~Symbol;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"1";
@@ -72,7 +78,7 @@
 
 - (void)testNegateMore {
     g = @"@start = ~Symbol & ~Number;";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"1";
@@ -87,7 +93,7 @@
 
 - (void)testNegateMore2 {
     g = @"@start = ~(Symbol|Number);";
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     
     s = @"1";
@@ -107,7 +113,7 @@
     @"name = Word;";
     //        @"nameTest = '*' | ncName ':' '*' | qName;"
     
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     t = lp.tokenizer;
     
@@ -135,7 +141,7 @@
     @"prefix = ncName;"
     @"ncName = Word;";
     
-    lp = [factory parserFromGrammar:g assembler:nil];
+    lp = [factory parserFromGrammar:g assembler:nil error:nil];
     TDNotNil(lp);
     t = lp.tokenizer;
     

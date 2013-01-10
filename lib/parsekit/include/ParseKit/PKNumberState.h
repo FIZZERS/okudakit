@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKNumberState.h
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 1/20/06.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import <Foundation/Foundation.h>
 #import <ParseKit/PKTokenizerState.h>
@@ -16,31 +22,39 @@
                 If <tt>allowsScientificNotation</tt> is YES (default is NO) this state allows 'e' or 'E' followed by an (optionally explicityly positive or negative) integer to represent 10 to the indicated power. For example, this state will recognize <tt>1e2</tt> as equaling <tt>100</tt>.</p>
 */
 @interface PKNumberState : PKTokenizerState {
-    BOOL allowsTrailingDot;
+    BOOL allowsTrailingDecimalSeparator;
     BOOL allowsScientificNotation;
     BOOL allowsOctalNotation;
     BOOL allowsHexadecimalNotation;
+    BOOL allowsFloatingPoint;
+    BOOL allowsGroupingSeparator;
+    
+    PKUniChar positivePrefix;
+    PKUniChar negativePrefix;
+    PKUniChar groupingSeparator;
+    PKUniChar decimalSeparator;
+    
     BOOL isDecimal;
     BOOL isFraction;
     BOOL isNegative;
     BOOL isHex;
     BOOL gotADigit;
     NSUInteger len;
-    CGFloat base;
+    PKFloat base;
     PKUniChar originalCin;
     PKUniChar firstNum;
     PKUniChar c;
-    CGFloat floatValue;
-    CGFloat exp;
+    PKFloat floatValue;
+    PKFloat exp;
     BOOL isNegativeExp;    
 }
 
 /*!
-    @property   allowsTrailingDot
-    @brief      If YES, numbers are allowed to end with a trialing dot, e.g. <tt>42.<tt>
+    @property   allowsTrailingDecimalSeparator
+    @brief      If YES, numbers are allowed to end with a trialing decimal separator, e.g. <tt>42.<tt>
     @details    default is NO
 */
-@property (nonatomic) BOOL allowsTrailingDot;
+@property (nonatomic) BOOL allowsTrailingDecimalSeparator;
 
 /*!
     @property   allowsScientificNotation
@@ -62,4 +76,23 @@
     @details    default is NO
 */
 @property (nonatomic) BOOL allowsHexadecimalNotation;
+
+/*!
+    @property   allowsFloatingPoint
+    @brief      If YES, supports floating point numbers like <tt>1.0<tt> or <tt>3.14<tt>. If NO, only whole numbers are allowed.
+    @details    default is YES
+*/
+@property (nonatomic) BOOL allowsFloatingPoint;
+
+/*!
+    @property   allowsGroupingSeparator
+    @brief      If YES, supports numbers with internal grouping separators like <tt>2,001</tt>.
+    @details    default is NO
+*/
+@property (nonatomic) BOOL allowsGroupingSeparator;
+
+@property (nonatomic) PKUniChar positivePrefix;
+@property (nonatomic) PKUniChar negativePrefix;
+@property (nonatomic) PKUniChar groupingSeparator;
+@property (nonatomic) PKUniChar decimalSeparator;
 @end

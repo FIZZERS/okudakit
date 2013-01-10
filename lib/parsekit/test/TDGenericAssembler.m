@@ -1,10 +1,16 @@
+//  Copyright 2010 Todd Ditchendorf
 //
-//  PKGenericAssembler.m
-//  ParseKit
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
 //
-//  Created by Todd Ditchendorf on 12/22/08.
-//  Copyright 2009 Todd Ditchendorf. All rights reserved.
+//  http://www.apache.org/licenses/LICENSE-2.0
 //
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import "TDGenericAssembler.h"
 #import "NSArray+ParseKitAdditions.h"
@@ -62,10 +68,10 @@
     NSString *productionName = [productionNames objectForKey:selName];
     
     if (!productionName) {
-        NSUInteger prefixLen = prefix.length;
-        NSInteger c = ((NSInteger)[selName characterAtIndex:prefixLen]) + 32; // lowercase
-        NSRange r = NSMakeRange(prefixLen + 1, selName.length - (prefixLen + suffix.length + 1 /*:*/));
-        productionName = [NSString stringWithFormat:@"%C%@", c, [selName substringWithRange:r]];
+        NSUInteger prefixLen = [prefix length];
+        PKUniChar c = (PKUniChar)[[selName lowercaseString] characterAtIndex:prefixLen];
+        NSRange r = NSMakeRange(prefixLen + 1, [selName length] - (prefixLen + [suffix length] + 1 /*:*/));
+        productionName = [NSString stringWithFormat:@"%C%@", (unichar)c, [selName substringWithRange:r]];
         [productionNames setObject:productionName forKey:selName];
     }
     
@@ -85,7 +91,7 @@
     
     NSMutableArray *toks = nil;
     PKToken *tok = nil;
-    while (tok = [a pop]) {
+    while ((tok = [a pop])) {
         if (PKTokenTypeWhitespace != tok.tokenType) {
             if (!toks) toks = [NSMutableArray array];
             [toks addObject:tok];
@@ -125,7 +131,7 @@
 - (NSMutableArray *)popWhitespaceTokensFrom:(PKAssembly *)a {
     NSMutableArray *whitespaceToks = nil;
     PKToken *tok = nil;
-    while (tok = [a pop]) {
+    while ((tok = [a pop])) {
         if (PKTokenTypeWhitespace == tok.tokenType) {
             if (!whitespaceToks) {
                 whitespaceToks = [NSMutableArray array];
