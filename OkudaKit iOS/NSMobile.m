@@ -26,13 +26,17 @@
 + (UIColor *)purpleColor { return [UIColor purpleColor]; }
 + (UIColor *)brownColor { return [UIColor brownColor]; }
 + (UIColor *)clearColor { return [UIColor clearColor]; }
++ (UIColor *)colorWithDeviceRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha {
+  return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+}
 
 @end
 
 @implementation NSFont
 
 + (UIFont *)fontWithName:(NSString *)fontName size:(CGFloat)fontSize {
-  return [UIFont fontWithName:fontName size:fontSize];
+  UIFont *font = [UIFont fontWithName:fontName size:fontSize];
+  return font ? font : [UIFont systemFontOfSize:fontSize];
 }
 
 @end
