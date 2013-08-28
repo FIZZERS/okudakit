@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		414920D817CEAA9A007215C1 /* parsekit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 414920D717CEAA9A007215C1 /* parsekit.a */; };
 		85D13878169E33CA006C01A4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85D13877169E33CA006C01A4 /* Foundation.framework */; };
 		85D1387D169E33CA006C01A4 /* OkudaKit_iOS.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 85D1387C169E33CA006C01A4 /* OkudaKit_iOS.h */; };
 		85D1387F169E33CA006C01A4 /* OkudaKit_iOS.m in Sources */ = {isa = PBXBuildFile; fileRef = 85D1387E169E33CA006C01A4 /* OkudaKit_iOS.m */; };
@@ -16,7 +17,6 @@
 		85D1388D169E33CA006C01A4 /* libOkudaKit iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 85D13875169E33CA006C01A4 /* libOkudaKit iOS.a */; };
 		85D13893169E33CA006C01A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 85D13891169E33CA006C01A4 /* InfoPlist.strings */; };
 		85D13896169E33CA006C01A4 /* OkudaKit_iOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 85D13895169E33CA006C01A4 /* OkudaKit_iOSTests.m */; };
-		85D1389F169E3410006C01A4 /* libparsekit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D3A8194A101E8C7B00C38137 /* libparsekit.a */; };
 		85D138A0169E341B006C01A4 /* OkudaKit.h in Sources */ = {isa = PBXBuildFile; fileRef = D3A81B23101E904600C38137 /* OkudaKit.h */; };
 		85D138A1169E341B006C01A4 /* OKSyntaxHighlighter.h in Sources */ = {isa = PBXBuildFile; fileRef = D3A81972101E8D5400C38137 /* OKSyntaxHighlighter.h */; };
 		85D138A2169E341B006C01A4 /* OKSyntaxHighlighter.m in Sources */ = {isa = PBXBuildFile; fileRef = D3A81976101E8D7500C38137 /* OKSyntaxHighlighter.m */; };
@@ -55,7 +55,7 @@
 		85D138E4169E4CA0006C01A4 /* html.css in Resources */ = {isa = PBXBuildFile; fileRef = D3A81AF5101E8F6700C38137 /* html.css */; };
 		85D138E5169E4CA0006C01A4 /* javascript.css in Resources */ = {isa = PBXBuildFile; fileRef = D3A81C78101EEB9700C38137 /* javascript.css */; };
 		85D138E6169E4CA0006C01A4 /* json.css in Resources */ = {isa = PBXBuildFile; fileRef = D3A81AF6101E8F6700C38137 /* json.css */; };
-		85D138E8169E4E31006C01A4 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 85D138E7169E4E31006C01A4 /* libicucore.dylib */; };
+		85D138E8169E4E31006C01A4 /* libicucore.A.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 85D138E7169E4E31006C01A4 /* libicucore.A.dylib */; };
 		85D138EA169E4FD6006C01A4 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85D138E9169E4FD5006C01A4 /* CoreFoundation.framework */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		D3A81957101E8C9600C38137 /* ParseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3A81946101E8C7B00C38137 /* ParseKit.framework */; };
@@ -207,8 +207,9 @@
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* OkudaKit_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OkudaKit_Prefix.pch; sourceTree = "<group>"; };
+		414920D717CEAA9A007215C1 /* parsekit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = parsekit.a; path = "Build/Products/Release-iphoneos/parsekit.a"; sourceTree = "<group>"; };
 		85D13875169E33CA006C01A4 /* libOkudaKit iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libOkudaKit iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		85D13877169E33CA006C01A4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		85D13877169E33CA006C01A4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = ../../../../System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		85D1387B169E33CA006C01A4 /* OkudaKit iOS-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OkudaKit iOS-Prefix.pch"; sourceTree = "<group>"; };
 		85D1387C169E33CA006C01A4 /* OkudaKit_iOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OkudaKit_iOS.h; sourceTree = "<group>"; };
 		85D1387E169E33CA006C01A4 /* OkudaKit_iOS.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OkudaKit_iOS.m; sourceTree = "<group>"; };
@@ -219,8 +220,8 @@
 		85D13892169E33CA006C01A4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		85D13894169E33CA006C01A4 /* OkudaKit_iOSTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OkudaKit_iOSTests.h; sourceTree = "<group>"; };
 		85D13895169E33CA006C01A4 /* OkudaKit_iOSTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OkudaKit_iOSTests.m; sourceTree = "<group>"; };
-		85D138A7169E3484006C01A4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
-		85D138A9169E3560006C01A4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		85D138A7169E3484006C01A4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		85D138A9169E3560006C01A4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		85D138AB169E35A2006C01A4 /* NSMobile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSMobile.h; sourceTree = "<group>"; };
 		85D138AC169E35A2006C01A4 /* NSMobile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSMobile.m; sourceTree = "<group>"; };
 		85D138B2169E37F7006C01A4 /* OKDemoMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OKDemoMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -237,8 +238,8 @@
 		85D138CD169E37F7006C01A4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
 		85D138CF169E37F7006C01A4 /* OKViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OKViewController.h; sourceTree = "<group>"; };
 		85D138D0169E37F7006C01A4 /* OKViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OKViewController.m; sourceTree = "<group>"; };
-		85D138E7169E4E31006C01A4 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk/usr/lib/libicucore.dylib; sourceTree = DEVELOPER_DIR; };
-		85D138E9169E4FD5006C01A4 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		85D138E7169E4E31006C01A4 /* libicucore.A.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.A.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/usr/lib/libicucore.A.dylib; sourceTree = DEVELOPER_DIR; };
+		85D138E9169E4FD5006C01A4 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* OkudaKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = OkudaKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -274,7 +275,7 @@
 		D3A81BD8101E95A300C38137 /* OKDemoAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OKDemoAppDelegate.h; path = app/OKDemoAppDelegate.h; sourceTree = "<group>"; };
 		D3A81BD9101E95A300C38137 /* OKDemoAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OKDemoAppDelegate.m; path = app/OKDemoAppDelegate.m; sourceTree = "<group>"; };
 		D3A81BDB101E95D200C38137 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = app/MainMenu.xib; sourceTree = "<group>"; };
-		D3A81BE8101E970600C38137 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		D3A81BE8101E970600C38137 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = ../../../../../../../System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		D3A81BFE101E97CF00C38137 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = app/main.m; sourceTree = "<group>"; };
 		D3A81C04101E98C000C38137 /* javascript.grammar */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = javascript.grammar; path = res/javascript.grammar; sourceTree = "<group>"; };
 		D3A81C06101E98D200C38137 /* example.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = example.css; path = app/example.css; sourceTree = "<group>"; };
@@ -293,7 +294,7 @@
 			files = (
 				85D138AA169E3560006C01A4 /* UIKit.framework in Frameworks */,
 				85D138A8169E3484006C01A4 /* CoreGraphics.framework in Frameworks */,
-				85D1389F169E3410006C01A4 /* libparsekit.a in Frameworks */,
+				414920D817CEAA9A007215C1 /* parsekit.a in Frameworks */,
 				85D13878169E33CA006C01A4 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -314,7 +315,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				85D138EA169E4FD6006C01A4 /* CoreFoundation.framework in Frameworks */,
-				85D138E8169E4E31006C01A4 /* libicucore.dylib in Frameworks */,
+				85D138E8169E4E31006C01A4 /* libicucore.A.dylib in Frameworks */,
 				85D138D7169E3813006C01A4 /* libOkudaKit iOS.a in Frameworks */,
 				85D138B4169E37F7006C01A4 /* UIKit.framework in Frameworks */,
 				85D138B5169E37F7006C01A4 /* Foundation.framework in Frameworks */,
@@ -369,8 +370,9 @@
 		0867D691FE84028FC02AAC07 /* OkudaKit */ = {
 			isa = PBXGroup;
 			children = (
+				414920D717CEAA9A007215C1 /* parsekit.a */,
 				85D138E9169E4FD5006C01A4 /* CoreFoundation.framework */,
-				85D138E7169E4E31006C01A4 /* libicucore.dylib */,
+				85D138E7169E4E31006C01A4 /* libicucore.A.dylib */,
 				D3A81935101E8C7B00C38137 /* ParseKit.xcodeproj */,
 				08FB77AEFE84172EC02AAC07 /* OkudaKit Framework */,
 				D3A81975101E8D6000C38137 /* OkudaKit Tests */,
@@ -1181,6 +1183,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/lib/parsekit/include";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Build/Products/Release-iphoneos\"",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -1208,6 +1214,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/lib/parsekit/include";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Build/Products/Release-iphoneos\"",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
